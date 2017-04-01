@@ -1,0 +1,32 @@
+.my-button-white {
+    background-color: white;
+    color: #1f2124;
+    border: 2px solid #289f5f;
+    width: 60px;
+    transition:background-color 0.5s,color 0.5s;
+
+}
+
+.my-button-white:hover{
+    background-color: #289f5f;
+    color: #ffffff;
+}
+
+.my-button-green {
+    background-color: #289f5f;
+    color: #ffffff;
+    width: 60px;
+    border: none;
+    transition:background-color 0.5s,border 0.5s,color 0.5s;
+}
+
+.my-button-green:hover{
+    background-color: #ffffff;
+    color: #289f5f;
+    border: 2px solid #289f5f;
+}
+
+.my-td {
+    vertical-align: middle !important;
+    font-size: large;
+}

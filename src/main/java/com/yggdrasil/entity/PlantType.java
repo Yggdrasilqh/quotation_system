@@ -1,27 +1,21 @@
 package com.yggdrasil.entity;
 
-import javax.persistence.*;
-import java.sql.Blob;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
- * Created by yggdrasil on 2017/3/31.
+ * Created by yggdrasil on 2017/4/1.
  */
 @Entity
-public class Plant {
+public class PlantType {
     @GeneratedValue
     @Id
     private int id;
 
     @Column
     private String name;
-
-    @Lob
-//    @Basic(fetch = FetchType.LAZY)
-    @Column
-    private byte[] image;
-
-    @Column
-    private String type;
 
     @Column
     private float price;
@@ -42,22 +36,6 @@ public class Plant {
         this.name = name;
     }
 
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public float getPrice() {
         return price;
     }
@@ -65,6 +43,4 @@ public class Plant {
     public void setPrice(float price) {
         this.price = price;
     }
-
-
 }
