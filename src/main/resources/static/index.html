@@ -46,8 +46,8 @@
         </div>
         <nav class="templatemo-left-nav">
             <ul>
-                <li><a href="#" class="active"><i class="fa fa-home fa-fw"></i>Dashboard</a></li>
-                <li><a href="data-visualization.html"><i class="fa fa-bar-chart fa-fw"></i>Charts</a></li>
+                <li><a href="index.html" class="active"><i class="fa fa-home fa-fw"></i>Dashboard</a></li>
+                <li><a href="plantType.html"><i class="fa fa-bar-chart fa-fw"></i>Charts</a></li>
                 <li><a href="data-visualization.html"><i class="fa fa-database fa-fw"></i>Data Visualization</a></li>
                 <li><a href="maps.html"><i class="fa fa-map-marker fa-fw"></i>Maps</a></li>
                 <li><a href="manage-users.html"><i class="fa fa-users fa-fw"></i>Manage Users</a></li>
@@ -162,7 +162,7 @@
 
 
     $(document).ready(function () {
-        showInfo();
+        clear();
 //        $('#plant-form-sub').click(function(){
 //            $('#plant-form').submit();
 //            sleep(1000);
@@ -178,6 +178,7 @@
             .removeAttr('checked')
             .removeAttr('selected');
         showInfo();
+        initPlantType();
     }
 
 
@@ -223,6 +224,29 @@
         for(var t = Date.now();Date.now() - t <= d;);
     }
 
+
+    function initPlantType() {
+        var plantType = getAllTypeInfo();
+        var plantTypeSelection = $("#plant-type");
+        plantTypeSelection.empty();
+        var option = "";
+        for(var loop = 0 ; loop < plantType.length ; loop++) {
+            option += "<option>" + plantType[loop].name + "</option>";
+        }
+        plantTypeSelection.append(option);
+    }
+
+    function getAllTypeInfo() {
+        var plants = null;
+        $.ajax({
+            url: '/plantType/getAll',
+            async: false,
+            success: function (data) {
+                plants = data;
+            }
+        });
+        return plants;
+    }
 
 </script>
 

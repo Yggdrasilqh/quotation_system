@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -52,6 +53,18 @@ public class PlantController {
         return plants;
     }
 
+    @RequestMapping("/selectInfo")
+    @ResponseBody
+    public HashMap<Integer, String> selectInfo(@RequestParam("type") String type) {
+        HashMap<Integer, String> hashMap = new HashMap<>();
+        List<Plant> plants;
+        if(type != null && !type.isEmpty()) {
+            plantRepository.findByType(type).forEach(plant -> hashMap.put(plant.getId(), plant.getName()));
+        }
+        return hashMap;
+
+    }
+
     @RequestMapping("/image")
     public ResponseEntity<byte[]> getImgOfPlant(int id) throws IOException {
         byte[] image = plantRepository.fineOneOnlyImage(id);
@@ -63,6 +76,7 @@ public class PlantController {
 //        outputStream.close();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
+//        headers.setCacheControl("no-cache");
         return new ResponseEntity<>(image, headers, HttpStatus.OK);
     }
 

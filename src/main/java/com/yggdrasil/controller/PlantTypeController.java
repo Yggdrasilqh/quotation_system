@@ -1,19 +1,22 @@
 package com.yggdrasil.controller;
 
+import com.yggdrasil.entity.Plant;
 import com.yggdrasil.entity.PlantType;
 import com.yggdrasil.repository.PlantTypeRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by yggdrasil on 2017/4/1.
  */
-@Controller
+@RestController
 @RequestMapping("/plantType")
 public class PlantTypeController {
 
@@ -21,13 +24,19 @@ public class PlantTypeController {
     PlantTypeRepository plantTypeRepository;
 
     @RequestMapping("/getAll")
-    @ResponseBody
     public List<PlantType> getAll(){
         return plantTypeRepository.findAll();
     }
 
+    @RequestMapping("/getSelect")
+    public HashMap<String,String> getSelet(){
+        List<PlantType> list = plantTypeRepository.findAll();
+        HashMap<String, String> hashMap = new HashMap<>();
+        list.forEach(plantType -> hashMap.put(plantType.getName(), plantType.getName()));
+        return hashMap;
+    }
+
     @RequestMapping("/add")
-    @ResponseBody
     public String add(String name, float price) {
         PlantType plantType = new PlantType();
         plantType.setName(name);
@@ -37,7 +46,6 @@ public class PlantTypeController {
     }
 
     @RequestMapping("/delete")
-    @ResponseBody
     public String add(int id) {
         plantTypeRepository.delete(id);
         return "success";
