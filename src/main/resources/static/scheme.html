@@ -112,7 +112,7 @@
             <div class="templatemo-flex-row">
                 <div class="col-1" style="text-align: center">
                     <button id="add-new-row" class="templatemo-blue-button">添加新行</button>
-                    <button onclick="sendTableArticles(1)" class="templatemo-blue-button">提交</button>
+                    <button id="submit-scheme" class="templatemo-blue-button">提交</button>
                 </div>
             </div>
         </div>
@@ -122,12 +122,65 @@
 
 <script>
 
+    var schemeID = 0;
     $(document).ready(function () {
 //        $("#scheme-table").editableTableWidget();
         $.fn.editable.defaults.mode = 'inline';
 
+        if(getQueryString("schemeID")) {
+            schemeID = getQueryString("schemeID");
+            showScheme(getScheme(schemeID));
+        }
         initEdit();
+        addButtonClick();
+        submitSchemeClick();
+    });
 
+    function getScheme(schemeID) {
+        var scheme = null;
+        $.ajax({
+            url: '/scheme/findBySchemeID',
+            data: {schemeID: schemeID},
+            async: false,
+            success: function(data){
+                scheme = data;
+            }
+        });
+        return scheme;
+    }
+
+    function showScheme(scheme) {
+        var content = "";
+        var schemeBody = $("#scheme-body");
+        for(var loop = 0 ; loop < scheme.length ; loop++) {
+            alert(scheme[loop].row);
+            var plant = getPlant(scheme[loop].plantID);
+            var typePrice = getTypePrice(plant.type);
+            content += "<tr>" +
+                "<td class='position1'>" + scheme[loop].position1 + "</td>" +
+                "<td class='position2'>" + scheme[loop].position2 + "</td>" +
+                "<td class='plant-name' plantID='" + plant.id + "'>" + plant.name + "</td>" +
+                "<td class='plant-image'><img style='height: 200px' src='/plant/image?id=" + plant.id + "'></td>" +
+                "<td class='number'>" + scheme[loop].number + "</td>" +
+                "<td class='plant-type'>" + plant.type + "</td>" +
+                "<td class='type-price'>" + typePrice + "</td>" +
+                "<td class='type-price-sum'>" + typePrice*30*scheme[loop].number + "</td>" +
+                "<td class='comment'>" + scheme[loop].comment + "</td>" +
+                "<td class='plant-price'>" + plant.price + "</td>" +
+                "<td class='plant-price-sum'>" + plant.price*scheme[loop].number + "</td>" +
+                "</tr>";
+        }
+        schemeBody.empty();
+        schemeBody.append(content);
+    }
+
+    function submitSchemeClick(){
+        $("#submit-scheme").on('click',function(){
+            sendTableArticles(schemeID);
+        })
+    }
+
+    function addButtonClick(){
         $('#add-new-row').click(function () {
             var row = "<tr>" +
                 "<td class='position1'></td>" +
@@ -146,7 +199,7 @@
             body.append(row);
             initEdit();
         })
-    });
+    }
 
 
     function getTypePrice(name) {
@@ -160,6 +213,18 @@
             }
         });
         return price;
+    }
+    function getPlant(id) {
+        var plant = 0;
+        $.ajax({
+            url: '/plant/findById',
+            data: {id: id},
+            async: false,
+            success: function (data) {
+                plant = data;
+            }
+        });
+        return plant;
     }
     function getPrice(id) {
         var price = 0;
@@ -206,9 +271,13 @@
             method: 'post',
             data: objects,
             dataType: 'json',
-            contentType: 'application/json'
+            contentType: 'application/json',
+            async: false,
+            success: function(){
+                alert("成功！");
+            }
         });
-
+        showScheme(getScheme(schemeID));
 //        $.post('@{OrdenComprasDetalles.update()}',
 //            {objects:tableObject},
 //            function (response) {
@@ -291,6 +360,16 @@
     }
 
 
+
+
+    function getQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!==null)
+            return  unescape(r[2]);
+        return null;
+    }
 </script>
 
 

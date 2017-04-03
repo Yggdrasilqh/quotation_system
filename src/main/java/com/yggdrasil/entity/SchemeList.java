@@ -17,7 +17,15 @@ public class SchemeList {
     @Column
     private String name;
     @Column
-    private Date date = new Date(new java.util.Date().getTime());
+    private Date date;
+
+    public SchemeList(String name,Date date) {
+        this.name = name;
+        this.date = date;
+    }
+
+    public SchemeList() {
+    }
 
     public int getId() {
         return id;

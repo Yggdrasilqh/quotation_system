@@ -106,6 +106,5 @@ function enableSetting(text) {
     else {
         $(".setting").fadeOut(400);
         text.text = "显示操作";
-
     }
 }

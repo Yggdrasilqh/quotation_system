@@ -28,7 +28,10 @@ public class PlantController {
     private PlantRepository plantRepository;
 
 
-
+    /*
+     * @RequestMapping(value = "/add", method = RequestMethod.POST)
+     * == @PostMapping(value = "/add")
+     */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String add(String name, String type, float price,
@@ -97,5 +100,11 @@ public class PlantController {
     public float getPrice(int id) {
         float price = plantRepository.findOne(id).getPrice();
         return price;
+    }
+
+    @RequestMapping("/findById")
+    @ResponseBody
+    public Plant findById(int id) {
+        return plantRepository.findOne(id);
     }
 }

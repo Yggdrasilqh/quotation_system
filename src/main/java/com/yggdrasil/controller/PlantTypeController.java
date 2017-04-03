@@ -53,8 +53,10 @@ public class PlantTypeController {
 
     @RequestMapping("/getPrice")
     public float price(String name) {
+        if(name != null && !name.equals(""))
         return plantTypeRepository.
                 findByName(name).
                 getPrice();
+        return 0;
     }
 }

@@ -30,4 +30,9 @@ public class SchemeController {
         }
         return "success";
     }
+
+    @RequestMapping("/findBySchemeID")
+    public List<Scheme> findByID(int schemeID) {
+        return schemeRepository.findBySchemeIDOrderByRow(schemeID);
+    }
 }
