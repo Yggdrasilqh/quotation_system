@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Created by yggdrasil on 2017/4/1.
  */
 public interface PlantTypeRepository extends JpaRepository<PlantType, Integer> {
-
+    PlantType findByName(String name);
 }

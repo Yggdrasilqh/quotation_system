@@ -67,7 +67,6 @@
 
         <div class="templatemo-content-container">
             <div class="templatemo-flex-row">
-
                 <div class="col-1">
                     <div class="panel panel-default templatemo-content-widget white-bg no-padding templatemo-overflow-hidden">
                         <i class="fa fa-times"></i>
@@ -77,40 +76,44 @@
                             <table class="table table-striped table-bordered" id="scheme-table">
                                 <thead>
                                 <tr>
-                                    <td>位置一</td>
-                                    <td>位置二</td>
-                                    <td>植物名称</td>
-                                    <td>植物图片</td>
-                                    <td>数量</td>
-                                    <td class="plant-type">型号</td>
-                                    <td>单价</td>
-                                    <td>总价</td>
-                                    <td>备注</td>
-                                    <td>成本单价</td>
-                                    <td>成本总价</td>
+                                    <td><b>位置一</b></td>
+                                    <td><b>位置二</b></td>
+                                    <td><b>植物名称</b></td>
+                                    <td><b>植物图片</b></td>
+                                    <td><b>数量</b></td>
+                                    <td><b>型号</b></td>
+                                    <td><b>单价</b></td>
+                                    <td><b>总价</b></td>
+                                    <td><b>备注</b></td>
+                                    <td><b>成本单价</b></td>
+                                    <td><b>成本总价</b></td>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="scheme-body">
                                 <tr>
-                                    <td>位置一</td>
-                                    <td>位置二</td>
-                                    <td class="plant-name">植物名称</td>
-                                    <td class="plant-image">植物图片</td>
-                                    <td>数量</td>
-                                    <td class="plant-type">型号</td>
-                                    <td class="price">单价</td>
-                                    <td>总价</td>
-                                    <td>备注</td>
-                                    <td>成本单价</td>
-                                    <td>成本总价</td>
+                                    <td class="position1"></td>
+                                    <td class="position2"></td>
+                                    <td class="plant-name"></td>
+                                    <td class="plant-image"></td>
+                                    <td class="number"></td>
+                                    <td class="plant-type"></td>
+                                    <td class="type-price"></td>
+                                    <td class="type-price-sum"></td>
+                                    <td class="comment"></td>
+                                    <td class="plant-price"></td>
+                                    <td class="plant-price-sum"></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
-
+            </div>
+            <div class="templatemo-flex-row">
+                <div class="col-1" style="text-align: center">
+                    <button id="add-new-row" class="templatemo-blue-button">添加新行</button>
+                    <button onclick="sendTableArticles(1)" class="templatemo-blue-button">提交</button>
+                </div>
             </div>
         </div>
     </div>
@@ -122,10 +125,135 @@
     $(document).ready(function () {
 //        $("#scheme-table").editableTableWidget();
         $.fn.editable.defaults.mode = 'inline';
-        test();
 
+        initEdit();
+
+        $('#add-new-row').click(function () {
+            var row = "<tr>" +
+                "<td class='position1'></td>" +
+                "<td class='position2'></td>" +
+                "<td class='plant-name'></td>" +
+                "<td class='plant-image'></td>" +
+                "<td class='number'></td>" +
+                "<td class='plant-type'></td>" +
+                "<td class='type-price'></td>" +
+                "<td class='type-price-sum'></td>" +
+                "<td class='comment'></td>" +
+                "<td class='plant-price'></td>" +
+                "<td class='plant-price-sum'></td>" +
+                "</tr>";
+            var body = $("#scheme-body");
+            body.append(row);
+            initEdit();
+        })
+    });
+
+
+    function getTypePrice(name) {
+        var price = 0;
+        $.ajax({
+            url: '/plantType/getPrice',
+            data: {name: name},
+            async: false,
+            success: function (data) {
+                price = data;
+            }
+        });
+        return price;
+    }
+    function getPrice(id) {
+        var price = 0;
+        $.ajax({
+            url: '/plant/getPrice',
+            data: {id: id},
+            async: false,
+            success: function (data) {
+                price = data;
+            }
+        });
+        return price;
+    }
+
+    function sendTableArticles(schemeID) {
+        var columns = [
+            'position1',
+            'position2',
+            'plant-name',
+            'number',
+            'comment'
+        ];
+        var tableObject = $('#scheme-body').find('tr').map(function (i) {
+            var row = {};
+            row["row"] = i+1;
+            row['schemeID'] = schemeID;
+            $(this).find('td').each(function (i) {
+                for(var loop = 0 ; loop < columns.length ; loop ++){
+                    var rowName = columns[loop];
+                    if($(this).hasClass(rowName)) {
+                        if(rowName === 'plant-name') {
+                            row['plantID'] = $(this).attr('plantID');
+                        } else {
+                            row[rowName] = $(this).text();
+                        }
+                    }
+                }
+            });
+            return row;
+        }).get();
+        var objects = JSON.stringify(tableObject);
+        $.ajax({
+            url: '/scheme/add',
+            method: 'post',
+            data: objects,
+            dataType: 'json',
+            contentType: 'application/json'
+        });
+
+//        $.post('@{OrdenComprasDetalles.update()}',
+//            {objects:tableObject},
+//            function (response) {
+//                console.log(response);
+//            }
+//        )
+    }
+
+    function initEdit(){
+        /**
+         * 初始化植物类型可编辑
+         */
+        $(".plant-type").editable({
+            type: 'select',
+            name: 'username',
+            title: 'Enter username',
+            source: '/plantType/getSelect',
+            showbuttons: false,
+            sourceCache: false
+        });
+
+        /**
+         * 初始化数量可编辑
+         */
+        $(".number").editable({
+            type: 'number',
+            step: 1
+        });
+
+        /**
+         * 数量更新 ==》 类型价格和本金更新
+         */
+        $(".number").on('save', function (e, params) {
+            var typePrice = $(this).parent().find('td.type-price').text();
+            var plantPrice = $(this).parent().find('td.plant-price').text();
+            $(this).parent().find('td.type-price-sum').text(typePrice * 30 * params.newValue);
+            $(this).parent().find('td.plant-price-sum').text(plantPrice * params.newValue);
+        });
+
+        /**
+         * 类型更新 ==》 销毁名字列并重建
+         */
         $(".plant-type").on('save', function (e, params) {
             var plant_name = $(this).parent().find('td.plant-name');
+            plant_name.editable('destroy');
             plant_name.editable({
                 sourceOptions: {data: {type: params.newValue}},
                 type: 'select',
@@ -135,29 +263,33 @@
                 sourceCache: false,
                 showbuttons: false
             });
+            var price = getTypePrice(params.newValue);
+            var num = plant_name.parent().find('td.number').text();
+            plant_name.parent().find('td.type-price').text(price);
+            if (num > 0) {
+                plant_name.parent().find('td.type-price-sum').text(price * 30 * num);
+            }
         });
 
+        /**
+         * 植物更新 ==》 更新图片，更新植物价格
+         */
         $(".plant-name").on('save', function (e, params) {
-            var d = new Date();
-            var img = "<img src='/plant/image?"+"id="+ params.newValue+"' style='max-height: 200px'/>";
+            $(this).attr("plantID", params.newValue);
+            var img = "<img src='/plant/image?" + "id=" + params.newValue + "' style='max-height: 200px' hidden/>";
             var td_img = $(this).parent().find('td.plant-image');
+            var num = $(this).parent().find('td.number').text();
             td_img.empty();
             td_img.append(img);
+            $("img").fadeIn(1000);
+            $(this).parent().find('td.plant-price').text(getPrice(params.newValue));
+            if (num > 0) {
+                $(this).parent().find('td.plant-price-sum').text(getPrice(params.newValue) * num);
+            }
 //            $('.plant-name').editable('destroy');
         });
-    });
-
-
-    function test() {
-        $(".plant-type").editable({
-            type: 'select',
-            name: 'username',
-            title: 'Enter username',
-            source: '/plantType/getSelect',
-            showbuttons: false,
-            sourceCache: false,
-        });
     }
+
 
 </script>
 

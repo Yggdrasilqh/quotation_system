@@ -50,4 +50,11 @@ public class PlantTypeController {
         plantTypeRepository.delete(id);
         return "success";
     }
+
+    @RequestMapping("/getPrice")
+    public float price(String name) {
+        return plantTypeRepository.
+                findByName(name).
+                getPrice();
+    }
 }

@@ -1,6 +1,7 @@
 package com.yggdrasil.controller;
 
 import com.yggdrasil.entity.Plant;
+import com.yggdrasil.entity.Scheme;
 import com.yggdrasil.repository.PlantRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -25,8 +26,8 @@ public class PlantController {
 
     @Resource
     private PlantRepository plantRepository;
-//    @PersistenceContext
-//    private EntityManager entityManager;
+
+
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -89,5 +90,12 @@ public class PlantController {
             return "false";
         }
         return "success";
+    }
+
+    @RequestMapping("/getPrice")
+    @ResponseBody
+    public float getPrice(int id) {
+        float price = plantRepository.findOne(id).getPrice();
+        return price;
     }
 }
