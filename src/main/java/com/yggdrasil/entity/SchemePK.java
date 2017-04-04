@@ -10,6 +10,14 @@ public class SchemePK implements Serializable {
     private int row;
     private int schemeID;
 
+    public SchemePK(int row, int schemeID) {
+        this.row = row;
+        this.schemeID = schemeID;
+    }
+
+    public SchemePK() {
+    }
+
     public int getRow() {
         return row;
     }

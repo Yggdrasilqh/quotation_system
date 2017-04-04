@@ -51,10 +51,9 @@
         </div>
         <nav class="templatemo-left-nav">
             <ul>
-                <li><a href="index.html"><i class="fa fa-home fa-fw"></i>Dashboard</a></li>
-                <li><a href="plantType.html" class="active"><i class="fa fa-bar-chart fa-fw"></i>Charts</a>
-                </li>
-                <li><a href="data-visualization.html"><i class="fa fa-database fa-fw"></i>Data Visualization</a></li>
+                <li><a href="index.html"><i class="fa fa-home fa-fw"></i>植物管理</a></li>
+                <li><a href="plantType.html"><i class="fa fa-bar-chart fa-fw"></i>种类管理</a></li>
+                <li><a href="schemeList.html" class="active"><i class="fa fa-database fa-fw"></i>报表管理</a></li>
                 <li><a href="maps.html"><i class="fa fa-map-marker fa-fw"></i>Maps</a></li>
                 <li><a href="manage-users.html"><i class="fa fa-users fa-fw"></i>Manage Users</a></li>
                 <li><a href="preferences.html"><i class="fa fa-sliders fa-fw"></i>Preferences</a></li>
@@ -87,6 +86,7 @@
                                     <td><b>备注</b></td>
                                     <td><b>成本单价</b></td>
                                     <td><b>成本总价</b></td>
+                                    <td><b>操作</b></td>
                                 </tr>
                                 </thead>
                                 <tbody id="scheme-body">
@@ -155,7 +155,7 @@
         for(var loop = 0 ; loop < scheme.length ; loop++) {
             var plant = getPlant(scheme[loop].plantID);
             var typePrice = getTypePrice(plant.type);
-            content += "<tr>" +
+            content += "<tr row='" + scheme[loop].row + "'>" +
                 "<td class='position1'>" + scheme[loop].position1 + "</td>" +
                 "<td class='position2'>" + scheme[loop].position2 + "</td>" +
                 "<td class='plant-name' plantID='" + plant.id + "'>" + plant.name + "</td>" +
@@ -167,10 +167,14 @@
                 "<td class='comment'>" + scheme[loop].comment + "</td>" +
                 "<td class='plant-price'>" + plant.price + "</td>" +
                 "<td class='plant-price-sum'>" + plant.price*scheme[loop].number + "</td>" +
+                "<td style='white-space:nowrap'><a class='templatemo-edit-btn' href='' onclick='deleteColumn(" + scheme[loop].row + ")'>删除</a></td>" +
                 "</tr>";
         }
         schemeBody.empty();
         schemeBody.append(content);
+        schemeBody.children().each(function(){
+            initPlantName($(this).find('td.plant-name'),$(this).find('td.plant-type').text());
+        })
     }
 
     function submitSchemeClick(){
@@ -179,9 +183,24 @@
         })
     }
 
+    /**
+     *删除还未保存的行
+     */
+    function deleteNoSave(obj){
+        var conf = confirm('确认删除?');
+        if(conf){
+            $(obj).parent().parent().remove();
+        }
+    }
+
     function addButtonClick(){
+
         $('#add-new-row').click(function () {
-            var row = "<tr>" +
+            var rowNo = 1;
+            var tr = $('tr');
+            if(tr.last().attr('row'))
+               rowNo = parseInt(tr.last().attr('row')) + 1;
+            var rowContent = "<tr row='" + rowNo + "'>" +
                 "<td class='position1'></td>" +
                 "<td class='position2'></td>" +
                 "<td class='plant-name'></td>" +
@@ -193,11 +212,27 @@
                 "<td class='comment'></td>" +
                 "<td class='plant-price'></td>" +
                 "<td class='plant-price-sum'></td>" +
+                "<td style='white-space:nowrap'><a class='templatemo-edit-btn' href='' onclick='deleteNoSave(this);return false;'>删除</a></td>" +
                 "</tr>";
             var body = $("#scheme-body");
-            body.append(row);
+            body.append(rowContent);
             initEdit();
         })
+    }
+
+    function deleteColumn(row){
+        $.ajax({
+            url: '/scheme/delete',
+            data: {row: row,schemeID: schemeID},
+            async: false,
+            success: function(data){
+                alert(data);
+            },
+            error: function(){
+                alert("失败");
+            }
+        });
+        showScheme(schemeID);
     }
 
 
@@ -248,7 +283,7 @@
         ];
         var tableObject = $('#scheme-body').find('tr').map(function (i) {
             var row = {};
-            row["row"] = i+1;
+            row["row"] = $(this).attr('row');
             row['schemeID'] = schemeID;
             $(this).find('td').each(function (i) {
                 for(var loop = 0 ; loop < columns.length ; loop ++){
@@ -265,9 +300,7 @@
             return row;
         }).get();
         for(var loop = 0 ; loop < tableObject.length ; loop ++) {
-            if(typeof(tableObject[loop]['plantID']) == "undefined" || tableObject[loop]['number'] == 'Empty') {
-                alert(typeof(tableObject[loop]['plantID']));
-                alert(tableObject[loop]['number']);
+            if(typeof(tableObject[loop]['plantID']) === "undefined" || tableObject[loop]['number'] === 'Empty') {
                 alert("植物或数量不能为空");
                 return false;
             }
@@ -293,6 +326,25 @@
 //                console.log(response);
 //            }
 //        )
+    }
+
+    /**
+     * 初始化植物名
+     * @param plant_name 植物名的jQuery对象
+     * @param plantType 植物类型名
+     */
+    function initPlantName(plant_name,plantType) {
+        plant_name.editable('destroy');
+        plant_name.editable({
+            sourceOptions: {data: {type: plantType}},
+            type: 'select',
+            name: 'plant_name',
+            title: 'choose plant name',
+            source: '/plant/selectInfo',
+            emptytext: '选择植物',
+            sourceCache: false,
+            showbuttons: false
+        });
     }
 
     function initEdit(){
@@ -321,6 +373,8 @@
             }
         });
 
+
+
         $(".position1").editable({
             type: 'text',
             emptytext: ''
@@ -345,17 +399,7 @@
          */
         $(".plant-type").on('save', function (e, params) {
             var plant_name = $(this).parent().find('td.plant-name');
-            plant_name.editable('destroy');
-            plant_name.editable({
-                sourceOptions: {data: {type: params.newValue}},
-                type: 'select',
-                name: 'plant_name',
-                title: 'choose plant name',
-                source: '/plant/selectInfo',
-                emptytext: '选择植物',
-                sourceCache: false,
-                showbuttons: false
-            });
+            initPlantName(plant_name,params.newValue);
             var price = getTypePrice(params.newValue);
             var num = plant_name.parent().find('td.number').text();
             plant_name.parent().find('td.type-price').text(price);

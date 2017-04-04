@@ -4,6 +4,7 @@ import com.yggdrasil.entity.Scheme;
 import com.yggdrasil.entity.SchemePK;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -11,4 +12,6 @@ import java.util.List;
  */
 public interface SchemeRepository extends JpaRepository<Scheme,SchemePK> {
     List<Scheme> findBySchemeIDOrderByRow(int schemeID);
+    @Transactional
+    void deleteBySchemeID(int schemeID);
 }

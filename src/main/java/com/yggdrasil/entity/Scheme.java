@@ -30,7 +30,7 @@ public class Scheme {
     @Column
     private String position2;
     @Column(nullable = false)
-    private String plantID;
+    private int plantID;
     @Column
     private int number;
     @Column
@@ -68,11 +68,11 @@ public class Scheme {
         this.position2 = position2;
     }
 
-    public String getPlantID() {
+    public int getPlantID() {
         return plantID;
     }
 
-    public void setPlantID(String plantID) {
+    public void setPlantID(int plantID) {
         this.plantID = plantID;
     }
 

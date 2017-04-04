@@ -33,7 +33,7 @@ function showInfo() {
         } else {
             tbody += "<a onclick=''>"
         }
-        tbody += "</td>" + "<td class='my-td setting' hidden><a onclick='remove(" + info[loop].id + ")'>删除</a></td>" +
+        tbody += "</td>" + "<td class='my-td setting' hidden><a class='templatemo-edit-btn' href='' onclick='remove(" + info[loop].id + ")'>删除</a></td>" +
             "</tr>";
     }
     plant_table.append(tbody);

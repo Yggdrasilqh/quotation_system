@@ -66,7 +66,6 @@ public class PlantController {
             plantRepository.findByType(type).forEach(plant -> hashMap.put(plant.getId(), plant.getName()));
         }
         return hashMap;
-
     }
 
     @RequestMapping("/image")

@@ -3,6 +3,7 @@ package com.yggdrasil.controller;
 import com.yggdrasil.entity.SchemeList;
 import com.yggdrasil.repository.SchemeListRepository;
 import com.yggdrasil.repository.SchemeRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,8 @@ import java.util.List;
 public class SchemeListController {
     @Resource
     private SchemeListRepository schemeListRepository;
+    @Resource
+    private SchemeRepository schemeRepository;
 
     @RequestMapping("/getAll")
     public List<SchemeList> getAll() {
@@ -39,6 +42,7 @@ public class SchemeListController {
     @RequestMapping("/delete")
     public String delete(int id) {
         try {
+            schemeRepository.deleteBySchemeID(id);
             schemeListRepository.delete(id);
         } catch (Exception e){
             return "error";
