@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import java.util.Calendar;
 
 /**
  * Created by yggdrasil on 2017/4/3.
@@ -11,6 +12,15 @@ import javax.persistence.IdClass;
 @Entity
 @IdClass(SchemePK.class)
 public class Scheme {
+    /**
+     * row 表的行号
+     * schemeID 该表的ID
+     * position1 位置1
+     * position2 位置2
+     * plantID 植物ID
+     * number 植物数量
+     * comment 备注
+     */
     @Id
     private int row;
     @Id
@@ -19,7 +29,7 @@ public class Scheme {
     private String position1;
     @Column
     private String position2;
-    @Column
+    @Column(nullable = false)
     private String plantID;
     @Column
     private int number;

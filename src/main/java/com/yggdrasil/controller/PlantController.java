@@ -39,7 +39,7 @@ public class PlantController {
         Plant plant = new Plant();
         plant.setName(name);
         plant.setType(type);
-        plant.setPrice(price);
+        plant.setPrice((float)(Math.round(price*100))/100);
         if (!image.isEmpty()) {
             try {
                 plant.setImage(image.getBytes());

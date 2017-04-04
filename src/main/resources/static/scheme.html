@@ -153,7 +153,6 @@
         var content = "";
         var schemeBody = $("#scheme-body");
         for(var loop = 0 ; loop < scheme.length ; loop++) {
-            alert(scheme[loop].row);
             var plant = getPlant(scheme[loop].plantID);
             var typePrice = getTypePrice(plant.type);
             content += "<tr>" +
@@ -265,16 +264,26 @@
             });
             return row;
         }).get();
+        for(var loop = 0 ; loop < tableObject.length ; loop ++) {
+            if(typeof(tableObject[loop]['plantID']) == "undefined" || tableObject[loop]['number'] == 'Empty') {
+                alert(typeof(tableObject[loop]['plantID']));
+                alert(tableObject[loop]['number']);
+                alert("植物或数量不能为空");
+                return false;
+            }
+        }
         var objects = JSON.stringify(tableObject);
         $.ajax({
             url: '/scheme/add',
             method: 'post',
             data: objects,
-            dataType: 'json',
             contentType: 'application/json',
             async: false,
-            success: function(){
+            success: function(data){
                 alert("成功！");
+            },
+            error: function(){
+                alert("失败");
             }
         });
         showScheme(getScheme(schemeID));
@@ -292,8 +301,7 @@
          */
         $(".plant-type").editable({
             type: 'select',
-            name: 'username',
-            title: 'Enter username',
+            emptytext: '请选择类型',
             source: '/plantType/getSelect',
             showbuttons: false,
             sourceCache: false
@@ -304,7 +312,22 @@
          */
         $(".number").editable({
             type: 'number',
-            step: 1
+            step: 1,
+            emptytext: '请输入数量',
+            validate: function(data){
+                if(data < 1){
+                    return "数量不能小于1";
+                }
+            }
+        });
+
+        $(".position1").editable({
+            type: 'text',
+            emptytext: ''
+        });
+        $(".position2").editable({
+            type: 'text',
+            emptytext: ' '
         });
 
         /**
@@ -329,6 +352,7 @@
                 name: 'plant_name',
                 title: 'choose plant name',
                 source: '/plant/selectInfo',
+                emptytext: '选择植物',
                 sourceCache: false,
                 showbuttons: false
             });
@@ -358,6 +382,7 @@
 //            $('.plant-name').editable('destroy');
         });
     }
+
 
 
 

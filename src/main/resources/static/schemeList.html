@@ -158,7 +158,7 @@
         var schemeList = getAllSchemeList();
         var body = "";
         for (var loop = 0; loop < schemeList.length; loop++) {
-            body += "<tr><td>" + schemeList[loop].name + "</td>" +
+            body += "<tr><td>" + "<a href='/scheme.html?schemeID= " + schemeList[loop].id + "'>" +schemeList[loop].name + "</a></td>" +
                 "<td>" + schemeList[loop].date + "</td>" +
                 "<td><a onclick='remove(" + schemeList[loop].id + ")'>删除</a></td>" +
                 "</tr>";

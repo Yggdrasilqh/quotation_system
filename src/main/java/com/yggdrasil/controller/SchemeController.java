@@ -5,6 +5,7 @@ import com.yggdrasil.entity.SchemePK;
 import com.yggdrasil.repository.SchemeRepository;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -20,7 +21,7 @@ public class SchemeController {
     private SchemeRepository schemeRepository;
 
 
-    @RequestMapping("/add")
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
     public String add(@RequestBody List<Scheme> schemes){
         try {
             schemeRepository.save(schemes);
