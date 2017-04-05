@@ -24,12 +24,13 @@ function showInfo() {
         flag = true;
     }
     for (var loop = 0; loop < info.length; loop++) {
-        tbody += "<tr><td hidden>" + info[loop].id + "</td>" +
-            "<td class='my-td'>" + info[loop].name + "</td>" +
-            "<td class='my-td'>" + info[loop].type + "</td>" +
-            "<td class='my-td'>" + info[loop].price + "</td><td>";
+        tbody += "<tr><td hidden id="+info[loop].id+"'>" + info[loop].id + "</td>" +
+            "<td class='my-td plant-name"+loop+"'>" + info[loop].name + "</td>" +
+            "<td class='my-td plant-type"+loop+"'>" + info[loop].type + "</td>" +
+            "<td class='my-td plant-price"+loop+"'>" + info[loop].price + "</td><td>";
         if (info[loop].image !== null) {
-            tbody += "<img src='plant/image?id=" + info[loop].id + "'style='height: 200px;'/>";
+            tbody += "<img class='img' onclick='img"+loop+".click()' src='plant/image?id=" + info[loop].id + "'style='height: 200px;'/>";
+            tbody+=  '<input id="img'+loop+'" name="image" type="file" style="display:none" onchange="img.value=this.value;" required/>'
         } else {
             tbody += "<a onclick=''>"
         }
@@ -39,6 +40,40 @@ function showInfo() {
     plant_table.append(tbody);
     if (flag)
         $('.setting').show();
+    $.fn.editable.defaults.mode = 'inline';
+
+    for (var loop = 0; loop < info.length; loop++){
+
+            $(".plant-name"+loop).editable({
+                type: 'text',
+                name: "name",
+                pk: info[loop].id,
+                url: "/plant/update"
+            });
+
+        $(".plant-type"+loop).editable({
+            type: 'select',
+            source: '/plantType/getSelect',
+            showbuttons: false,
+            sourceCache: false,
+            name:"type",
+            pk:info[loop].id,
+            url:"/plant/update"
+        });
+        $(".plant-price"+loop).editable({
+            type: 'number',
+            step: 1,
+            emptytext: '请输入成本价',
+            validate: function(data){
+                if(data < 0){
+                    return "成本价不能小于0";
+                }
+            },
+            name:"price",
+            pk:info[loop].id,
+            url:"/plant/update"
+        });
+    }
 }
 
 function remove(id) {

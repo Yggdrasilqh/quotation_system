@@ -10,6 +10,7 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/templatemo-style.css" rel="stylesheet">
+    <link href="css/bootstrap-editable.css" rel="stylesheet"/>
 
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -155,6 +156,9 @@
 <script src="js/jquery-1.11.2.min.js"></script>      <!-- jQuery -->
 <script src="js/jquery-migrate-1.2.1.min.js"></script> <!--  jQuery Migrate Plugin -->
 <script src="js/plant.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-editable.min.js"></script>
+<!--<script src="js/mocsAjax.js"></script>-->
 <script type="text/javascript" src="js/templatemo-script.js"></script>      <!-- Templatemo Script -->
 
 <script>
@@ -162,6 +166,10 @@
 
 
     $(document).ready(function () {
+        $(".img").blur(function () {
+            var id = $(this).next();
+            alert(id);
+        });
         clear();
 //        $('#plant-form-sub').click(function(){
 //            $('#plant-form').submit();
@@ -169,6 +177,8 @@
 //            alert("添加成功");
 //            return false;
 //        });
+
+        initEdit();
     });
 
     function clear(){
@@ -247,7 +257,6 @@
         });
         return plants;
     }
-
 </script>
 
 

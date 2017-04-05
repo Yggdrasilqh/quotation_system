@@ -35,11 +35,11 @@ public class PlantController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String add(String name, String type, float price,
-                      @RequestParam(value = "image",required = true) MultipartFile image) {
+                      @RequestParam(value = "image", required = true) MultipartFile image) {
         Plant plant = new Plant();
         plant.setName(name);
         plant.setType(type);
-        plant.setPrice((float)(Math.round(price*100))/100);
+        plant.setPrice((float) (Math.round(price * 100)) / 100);
         if (!image.isEmpty()) {
             try {
                 plant.setImage(image.getBytes());
@@ -50,6 +50,7 @@ public class PlantController {
         plantRepository.save(plant);
         return "success";
     }
+
     @RequestMapping("/allInfo")
     @ResponseBody
     public List<Plant> getPlant() {
@@ -62,7 +63,7 @@ public class PlantController {
     public HashMap<Integer, String> selectInfo(@RequestParam("type") String type) {
         HashMap<Integer, String> hashMap = new HashMap<>();
         List<Plant> plants;
-        if(type != null && !type.isEmpty()) {
+        if (type != null && !type.isEmpty()) {
             plantRepository.findByType(type).forEach(plant -> hashMap.put(plant.getId(), plant.getName()));
         }
         return hashMap;
@@ -105,5 +106,30 @@ public class PlantController {
     @ResponseBody
     public Plant findById(int id) {
         return plantRepository.findOne(id);
+    }
+
+    @PostMapping("/update")
+    @ResponseBody
+    public String update(String name, String value, int pk) {
+
+        Plant plant = plantRepository.findOne(pk);
+        switch (name) {
+            case "name":
+                plant.setName(value);
+                plantRepository.saveAndFlush(plant);
+                break;
+            case "type":
+                plant.setType(value);
+                plantRepository.saveAndFlush(plant);
+                break;
+            case "price":
+                float value_float = Integer.valueOf(value);
+                plant.setPrice(value_float);
+                plantRepository.saveAndFlush(plant);
+
+        }
+        System.out.println(name);
+        System.out.println(value);
+        return "success";
     }
 }
