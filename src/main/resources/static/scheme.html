@@ -11,6 +11,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/templatemo-style.css" rel="stylesheet">
     <link href="css/bootstrap-editable.css" rel="stylesheet"/>
+    <link href="css/my.css" rel="stylesheet"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -84,6 +85,7 @@
                                     <td><b>单价</b></td>
                                     <td><b>总价</b></td>
                                     <td><b>备注</b></td>
+                                    <td><b>图片备注</b></td>
                                     <td><b>成本单价</b></td>
                                     <td><b>成本总价</b></td>
                                     <td><b>操作</b></td>
@@ -127,11 +129,13 @@
 //        $("#scheme-table").editableTableWidget();
         $.fn.editable.defaults.mode = 'inline';
 
-        if(getQueryString("schemeID")) {
+        if (getQueryString("schemeID")) {
             schemeID = getQueryString("schemeID");
             showScheme(getScheme(schemeID));
+            initEdit();
         }
-        initEdit();
+        addImageButton();
+        chooseImgButton();
         addButtonClick();
         submitSchemeClick();
     });
@@ -142,7 +146,7 @@
             url: '/scheme/findBySchemeID',
             data: {schemeID: schemeID},
             async: false,
-            success: function(data){
+            success: function (data) {
                 scheme = data;
             }
         });
@@ -152,7 +156,7 @@
     function showScheme(scheme) {
         var content = "";
         var schemeBody = $("#scheme-body");
-        for(var loop = 0 ; loop < scheme.length ; loop++) {
+        for (var loop = 0; loop < scheme.length; loop++) {
             var plant = getPlant(scheme[loop].plantID);
             var typePrice = getTypePrice(plant.type);
             content += "<tr row='" + scheme[loop].row + "'>" +
@@ -163,43 +167,51 @@
                 "<td class='number'>" + scheme[loop].number + "</td>" +
                 "<td class='plant-type'>" + plant.type + "</td>" +
                 "<td class='type-price'>" + typePrice + "</td>" +
-                "<td class='type-price-sum'>" + typePrice*30*scheme[loop].number + "</td>" +
+                "<td class='type-price-sum'>" + typePrice * 30 * scheme[loop].number + "</td>" +
                 "<td class='comment'>" + scheme[loop].comment + "</td>" +
+                '<td class="commentImage"><img class="comment-img" style="max-height: 200px" src="/scheme/image?schemeID=' + schemeID + '&row=' + scheme[loop].row + '"/>' +
+                '<input type="button" class="my-button-white" value="浏览" onclick="$(this).parent().parent().find(\'td.addImg\').click()"></td>' +
+                '<td hidden><input class="addImage" name="comment-image" type="file"></td>' +
                 "<td class='plant-price'>" + plant.price + "</td>" +
-                "<td class='plant-price-sum'>" + plant.price*scheme[loop].number + "</td>" +
+                "<td class='plant-price-sum'>" + plant.price * scheme[loop].number + "</td>" +
                 "<td style='white-space:nowrap'><a class='templatemo-edit-btn' href='' onclick='deleteColumn(" + scheme[loop].row + ")'>删除</a></td>" +
                 "</tr>";
         }
         schemeBody.empty();
         schemeBody.append(content);
-        schemeBody.children().each(function(){
-            initPlantName($(this).find('td.plant-name'),$(this).find('td.plant-type').text());
+        schemeBody.children().each(function () {
+            initPlantName($(this).find('td.plant-name'), $(this).find('td.plant-type').text());
         })
     }
 
-    function submitSchemeClick(){
-        $("#submit-scheme").on('click',function(){
+    function submitSchemeClick() {
+        $("#submit-scheme").on('click', function () {
             sendTableArticles(schemeID);
-        })
+            showScheme(getScheme(schemeID));
+            initEdit();
+            addImageButton();
+            chooseImgButton();
+            addButtonClick();
+        });
     }
 
     /**
      *删除还未保存的行
      */
-    function deleteNoSave(obj){
+    function deleteNoSave(obj) {
         var conf = confirm('确认删除?');
-        if(conf){
+        if (conf) {
             $(obj).parent().parent().remove();
         }
     }
 
-    function addButtonClick(){
+    function addButtonClick() {
 
         $('#add-new-row').click(function () {
             var rowNo = 1;
             var tr = $('tr');
-            if(tr.last().attr('row'))
-               rowNo = parseInt(tr.last().attr('row')) + 1;
+            if (tr.last().attr('row'))
+                rowNo = parseInt(tr.last().attr('row')) + 1;
             var rowContent = "<tr row='" + rowNo + "'>" +
                 "<td class='position1'></td>" +
                 "<td class='position2'></td>" +
@@ -210,6 +222,8 @@
                 "<td class='type-price'></td>" +
                 "<td class='type-price-sum'></td>" +
                 "<td class='comment'></td>" +
+                '<td class="commentImage"><img class="comment-img" style="max-height: 200px" hidden/><input type="button" class="my-button-white" value="浏览" ></td>' +
+                '<td hidden><input class="addImage" name="comment-image" type="file"></td>' +
                 "<td class='plant-price'></td>" +
                 "<td class='plant-price-sum'></td>" +
                 "<td style='white-space:nowrap'><a class='templatemo-edit-btn' href='' onclick='deleteNoSave(this);return false;'>删除</a></td>" +
@@ -217,22 +231,29 @@
             var body = $("#scheme-body");
             body.append(rowContent);
             initEdit();
+            addImageButton();
+            chooseImgButton();
         })
     }
 
-    function deleteColumn(row){
+    function chooseImgButton() {
+        $('.my-button-white').on('click', function () {
+            $(this).parent().parent().find('input.addImage').click();
+        })
+    }
+
+    function deleteColumn(row) {
         $.ajax({
             url: '/scheme/delete',
-            data: {row: row,schemeID: schemeID},
+            data: {row: row, schemeID: schemeID},
             async: false,
-            success: function(data){
-                alert(data);
+            success: function (data) {
+                alert('成功');
             },
-            error: function(){
+            error: function () {
                 alert("失败");
             }
         });
-        showScheme(schemeID);
     }
 
 
@@ -273,24 +294,40 @@
         return price;
     }
 
+    /**
+     * 提交表单
+     */
     function sendTableArticles(schemeID) {
         var columns = [
             'position1',
             'position2',
             'plant-name',
             'number',
-            'comment'
+            'comment',
+            'commentImage'
         ];
         var tableObject = $('#scheme-body').find('tr').map(function (i) {
             var row = {};
             row["row"] = $(this).attr('row');
             row['schemeID'] = schemeID;
             $(this).find('td').each(function (i) {
-                for(var loop = 0 ; loop < columns.length ; loop ++){
+                for (var loop = 0; loop < columns.length; loop++) {
                     var rowName = columns[loop];
-                    if($(this).hasClass(rowName)) {
-                        if(rowName === 'plant-name') {
+                    if ($(this).hasClass(rowName)) {
+                        if (rowName === 'plant-name') {
                             row['plantID'] = $(this).attr('plantID');
+                        } else if (rowName === 'commentImage') {
+                            var img_src = $(this).find('img.comment-img').attr('src');
+                            if (img_src) {
+                                var temp = img_src.split("base64,");
+                                if (temp.length > 1) {
+                                    row[rowName] = temp[1];
+                                } else {
+                                    row[rowName] = 'c3VjY2Vzcw==';
+                                }
+                            } else {
+                                row[rowName] = 'c3VjY2Vzcw==';
+                            }
                         } else {
                             row[rowName] = $(this).text();
                         }
@@ -299,13 +336,30 @@
             });
             return row;
         }).get();
-        for(var loop = 0 ; loop < tableObject.length ; loop ++) {
-            if(typeof(tableObject[loop]['plantID']) === "undefined" || tableObject[loop]['number'] === 'Empty') {
+        for (var loop = 0; loop < tableObject.length; loop++) {
+            if (typeof(tableObject[loop]['plantID']) === "undefined" || tableObject[loop]['number'] === 'Empty') {
                 alert("植物或数量不能为空");
                 return false;
             }
         }
         var objects = JSON.stringify(tableObject);
+//        var formData = new FormData(objects);
+//        $.ajax({
+//            type: 'post',
+//            url: '/scheme/add',
+//            data: formData,
+//            mimeType: "multipart/form-data",
+//            async: false,
+//            contentType: false,
+//            cache: false,
+//            processData: false,
+//            success: function (data) {
+//                alert("添加成功");
+//            },
+//            error: function (data) {
+//                alert(data);
+//            }
+//        });
         $.ajax({
             url: '/scheme/add',
             method: 'post',
@@ -319,7 +373,6 @@
                 alert("失败");
             }
         });
-        showScheme(getScheme(schemeID));
 //        $.post('@{OrdenComprasDetalles.update()}',
 //            {objects:tableObject},
 //            function (response) {
@@ -333,7 +386,7 @@
      * @param plant_name 植物名的jQuery对象
      * @param plantType 植物类型名
      */
-    function initPlantName(plant_name,plantType) {
+    function initPlantName(plant_name, plantType) {
         plant_name.editable('destroy');
         plant_name.editable({
             sourceOptions: {data: {type: plantType}},
@@ -347,7 +400,7 @@
         });
     }
 
-    function initEdit(){
+    function initEdit() {
         /**
          * 初始化植物类型可编辑
          */
@@ -366,13 +419,12 @@
             type: 'number',
             step: 1,
             emptytext: '请输入数量',
-            validate: function(data){
-                if(data < 1){
+            validate: function (data) {
+                if (data < 1) {
                     return "数量不能小于1";
                 }
             }
         });
-
 
 
         $(".position1").editable({
@@ -399,7 +451,7 @@
          */
         $(".plant-type").on('save', function (e, params) {
             var plant_name = $(this).parent().find('td.plant-name');
-            initPlantName(plant_name,params.newValue);
+            initPlantName(plant_name, params.newValue);
             var price = getTypePrice(params.newValue);
             var num = plant_name.parent().find('td.number').text();
             plant_name.parent().find('td.type-price').text(price);
@@ -427,16 +479,29 @@
         });
     }
 
+    function addImageButton() {
+        $(".addImage").change(function (e) {
+            var img = $(this).parent().parent().find("img.comment-img")
+            for (var i = 0; i < e.target.files.length; i++) {
+                var file = e.target.files.item(i);
+                var freader = new FileReader();
+                freader.readAsDataURL(file);
+                freader.onload = function (e) {
+                    var src = e.target.result;
+                    img.attr("src", src);
+                    img.slideDown();
+                }
+            }
+            return e;
+        });
+    }
 
 
-
-
-    function getQueryString(name)
-    {
-        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
-        if(r!==null)
-            return  unescape(r[2]);
+        if (r !== null)
+            return unescape(r[2]);
         return null;
     }
 </script>
