@@ -70,7 +70,7 @@ public class PlantController {
 
     @RequestMapping("/image")
     public ResponseEntity<byte[]> getImgOfPlant(int id) throws IOException {
-        byte[] image = plantRepository.fineOneOnlyImage(id);
+        byte[] image = plantRepository.findOneOnlyImage(id);
 //        Stream方法
 //        httpServletResponse.setContentType(MediaType.IMAGE_JPEG_VALUE);
 //        OutputStream outputStream = httpServletResponse.getOutputStream();

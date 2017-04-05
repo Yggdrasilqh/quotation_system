@@ -138,6 +138,7 @@
         chooseImgButton();
         addButtonClick();
         submitSchemeClick();
+        setImageStatus();
     });
 
     function getScheme(schemeID) {
@@ -236,11 +237,6 @@
         })
     }
 
-    function chooseImgButton() {
-        $('.my-button-white').on('click', function () {
-            $(this).parent().parent().find('input.addImage').click();
-        })
-    }
 
     function deleteColumn(row) {
         $.ajax({
@@ -366,10 +362,10 @@
             data: objects,
             contentType: 'application/json',
             async: false,
-            success: function(data){
+            success: function (data) {
                 alert("成功！");
             },
-            error: function(){
+            error: function () {
                 alert("失败");
             }
         });
@@ -479,6 +475,9 @@
         });
     }
 
+    /**
+     * 图片input改变事件
+     */
     function addImageButton() {
         $(".addImage").change(function (e) {
             var img = $(this).parent().parent().find("img.comment-img")
@@ -494,6 +493,25 @@
             }
             return e;
         });
+    }
+
+    /**
+     * 浏览按钮按下事件
+     */
+    function chooseImgButton() {
+        $('.my-button-white').on('click', function () {
+            $(this).parent().parent().find('input.addImage').click();
+        })
+    }
+
+    function setImageStatus() {
+        $("img").each(function () {
+                if (!$(this).attr('src')) {
+                    $(this).parent().parent().find('.my-button-white').hide();
+                    $(this).click = $(this).parent().parent().find('.my-button-white').click;
+                }
+            }
+        )
     }
 
 

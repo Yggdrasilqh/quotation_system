@@ -14,7 +14,7 @@ public interface PlantRepository extends JpaRepository<Plant, Integer> {
     String FIND_IMAGE = "SELECT IMAGE FROM PLANT WHERE ID = ?1";
 
     @Query(value = FIND_IMAGE, nativeQuery = true)
-    byte[] fineOneOnlyImage(int id);
+    byte[] findOneOnlyImage(int id);
 
     List<Plant> findByType(String type);
 }

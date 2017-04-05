@@ -35,6 +35,16 @@ public class Scheme {
     private int number;
     @Column
     private String comment;
+    @Column
+    private byte[] commentImage;
+
+    public byte[] getCommentImage() {
+        return commentImage;
+    }
+
+    public void setCommentImage(byte[] commentImage) {
+        this.commentImage = commentImage;
+    }
 
     public int getRow() {
         return row;
