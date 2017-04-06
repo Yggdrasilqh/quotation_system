@@ -46,14 +46,14 @@ public class downloadController {
         int colNum;
         int rowNum = schemes.size() + 2;
         List<Integer> index = new ArrayList<>();
-        if (null!=writ) {
+        if (null != writ) {
             colNum = Scheme.class.getDeclaredFields().length;
-            for(int w:writ){
+            for (int w : writ) {
                 index.add(w);
             }
         } else {
             colNum = 12;
-            for (int i = 0;i<12;i++){
+            for (int i = 0; i < 12; i++) {
                 index.add(i);
             }
         }
@@ -87,7 +87,7 @@ public class downloadController {
             }
 
             for (int c = 0; c < colNum; c++) {
-                if (index.get(c) != 3) {
+                if (index.get(c) % 3!=0) {
                     sheet.setColumnWidth(index.get(c), 4020);
                 }
 
@@ -95,7 +95,7 @@ public class downloadController {
                 cell.setCellStyle(style);
                 if (r == 0) {
                     cell.setCellValue(schemeName);
-                    c = colNum-1;
+                    c = colNum - 1;
                 } else {
                     if (r == 1) {
                         cell.setCellValue(excelHead[index.get(c)]);
@@ -117,11 +117,12 @@ public class downloadController {
                                 BufferedImage image = ImageIO.read(in);
 //                                System.out.println(image.getWidth() + " " + image.getHeight());
                                 sheet.getRow(r).setHeightInPoints(image.getHeight() * ((5 + 30 * 7) * 72 / 96) / image.getWidth());
-//                                System.out.println(image.getHeight()*((5+20*7)*72/96)/image.getWidth());
+                                System.out.println(image.getHeight() * ((5 + 30 * 7) * 72 / 96) / image.getWidth());
+                                double scale = ((double) 1920/image.getWidth())*0.08;
                                 sheet.addMergedRegion(new CellRangeAddress(r, r, c, c));
                                 HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
                                 HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) c, r, (short) (c + 1), r + 1);
-                                patriarch.createPicture(anchor, wb.addPicture(pic, HSSFWorkbook.PICTURE_TYPE_JPEG));
+                                patriarch.createPicture(anchor, wb.addPicture(pic, HSSFWorkbook.PICTURE_TYPE_JPEG)).resize(scale);
                                 break;
                             case 4:
                                 cell.setCellValue(schemes.get(r - 2).getNumber());
@@ -136,11 +137,27 @@ public class downloadController {
                                 cell.setCellValue(schemes.get(r - 2).getNumber() * typeRepository.findByName(plantRepository.findOne(schemes.get(r - 2).getPlantID()).getType()).getPrice());
                                 break;
                             case 8:
-                                cell.setCellValue(" ");
+                                cell.setCellValue(schemes.get(r - 2).getComment());
                                 break;
                             case 9:
-                                cell.setCellValue(" ");
+                                try {
+                                    byte[] picComment = schemes.get(r - 2).getCommentImage();
+                                    ByteArrayInputStream inComment = new ByteArrayInputStream(picComment);
+                                    BufferedImage CommentImage = ImageIO.read(inComment);
+//                                    sheet.getRow(r).setHeightInPoints(CommentImage.getHeight() * ((5 + 30 * 7) * 72 / 96) / CommentImage.getWidth());
+                                    sheet.addMergedRegion(new CellRangeAddress(r, r, c, c));
+                                    System.out.println(CommentImage.getHeight());
+                                    double scaleComment = ((double) 1920/CommentImage.getWidth())*0.08;
+                                    HSSFPatriarch patriarchComment = (HSSFPatriarch) sheet.createDrawingPatriarch();
+                                    HSSFClientAnchor anchorComment = new HSSFClientAnchor(0, 0, 0, 0, (short) c, r, (short) (c + 1), r + 1);
+                                    patriarchComment.createPicture(anchorComment, wb.addPicture(picComment, HSSFWorkbook.PICTURE_TYPE_JPEG)).resize(scaleComment);
+
+                                } catch (Exception e) {
+                                    cell.setCellValue("");
+                                }
                                 break;
+
+
                             case 10:
                                 cell.setCellValue(plantRepository.findOne(schemes.get(r - 2).getPlantID()).getPrice());
                                 break;
