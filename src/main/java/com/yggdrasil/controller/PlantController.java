@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class PlantController {
 
     @PostMapping("/update")
     @ResponseBody
-    public String update(String name, String value, int pk) {
+    public String update(String name,@RequestParam(value = "value",required = false) String value, int pk,@RequestParam(value = "image",required = false)String image) {
 
         Plant plant = plantRepository.findOne(pk);
         switch (name) {
@@ -126,10 +127,16 @@ public class PlantController {
                 float value_float = Integer.valueOf(value);
                 plant.setPrice(value_float);
                 plantRepository.saveAndFlush(plant);
+                break;
+            case "image":
+                byte[] imageByte = org.springframework.util.Base64Utils.decodeFromString(image);
+                plant.setImage(imageByte);
+                plantRepository.saveAndFlush(plant);
+                break;
 
         }
-        System.out.println(name);
-        System.out.println(value);
+//        System.out.println(name);
+//        System.out.println(value);
         return "success";
     }
 }
