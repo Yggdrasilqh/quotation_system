@@ -26,6 +26,7 @@
     <script src="js/bootstrap-editable.min.js"></script>
     <!--<script src="js/jquery-migrate-1.2.1.min.js"></script> &lt;!&ndash;  jQuery Migrate Plugin &ndash;&gt;-->
     <script type="text/javascript" src="js/templatemo-script.js"></script>
+    <script src="js/jquery.base64.js"></script>
     <!--<script src="js/plant.js"></script>-->
 </head>
 <body>
@@ -138,7 +139,6 @@
         chooseImgButton();
         addButtonClick();
         submitSchemeClick();
-        setImageStatus();
     });
 
     function getScheme(schemeID) {
@@ -161,28 +161,29 @@
             var plant = getPlant(scheme[loop].plantID);
             var typePrice = getTypePrice(plant.type);
             content += "<tr row='" + scheme[loop].row + "'>" +
-                "<td class='position1'>" + scheme[loop].position1 + "</td>" +
-                "<td class='position2'>" + scheme[loop].position2 + "</td>" +
-                "<td class='plant-name' plantID='" + plant.id + "'>" + plant.name + "</td>" +
-                "<td class='plant-image'><img style='height: 200px' src='/plant/image?id=" + plant.id + "'></td>" +
-                "<td class='number'>" + scheme[loop].number + "</td>" +
-                "<td class='plant-type'>" + plant.type + "</td>" +
-                "<td class='type-price'>" + typePrice + "</td>" +
-                "<td class='type-price-sum'>" + typePrice * 30 * scheme[loop].number + "</td>" +
-                "<td class='comment'>" + scheme[loop].comment + "</td>" +
-                '<td class="commentImage"><img class="comment-img" style="max-height: 200px" src="/scheme/image?schemeID=' + schemeID + '&row=' + scheme[loop].row + '"/>' +
+                "<td class='position1 my-td'>" + scheme[loop].position1 + "</td>" +
+                "<td class='position2 my-td'>" + scheme[loop].position2 + "</td>" +
+                "<td class='plant-name my-td' plantID='" + plant.id + "'>" + plant.name + "</td>" +
+                "<td class='plant-image my-td'><img style='height: 200px' src='/plant/image?id=" + plant.id + "'></td>" +
+                "<td class='number my-td'>" + scheme[loop].number + "</td>" +
+                "<td class='plant-type my-td'>" + plant.type + "</td>" +
+                "<td class='type-price my-td'>" + typePrice + "</td>" +
+                "<td class='type-price-sum my-td'>" + typePrice * 30 * scheme[loop].number + "</td>" +
+                "<td class='comment my-td'>" + scheme[loop].comment + "</td>" +
+                '<td class="commentImage my-td"><img class="comment-img" style="max-height: 200px" src="/scheme/image?schemeID=' + schemeID + '&row=' + scheme[loop].row + '"/>' +
                 '<input type="button" class="my-button-white" value="浏览" onclick="$(this).parent().parent().find(\'td.addImg\').click()"></td>' +
                 '<td hidden><input class="addImage" name="comment-image" type="file"></td>' +
-                "<td class='plant-price'>" + plant.price + "</td>" +
-                "<td class='plant-price-sum'>" + plant.price * scheme[loop].number + "</td>" +
-                "<td style='white-space:nowrap'><a class='templatemo-edit-btn' href='' onclick='deleteColumn(" + scheme[loop].row + ")'>删除</a></td>" +
+                "<td class='plant-price my-td'>" + plant.price + "</td>" +
+                "<td class='plant-price-sum my-td'>" + plant.price * scheme[loop].number + "</td>" +
+                "<td style='white-space:nowrap'><a class='templatemo-edit-btn' href='' onclick='deleteColumn(" + scheme[loop].row + ")'>删除</a><a class='templatemo-edit-btn' href='' onclick='insertAfter(this);return false;'>在下添加行</a></td>" +
                 "</tr>";
         }
         schemeBody.empty();
         schemeBody.append(content);
         schemeBody.children().each(function () {
             initPlantName($(this).find('td.plant-name'), $(this).find('td.plant-type').text());
-        })
+        });
+        setImageStatus();
     }
 
     function submitSchemeClick() {
@@ -214,26 +215,27 @@
             if (tr.last().attr('row'))
                 rowNo = parseInt(tr.last().attr('row')) + 1;
             var rowContent = "<tr row='" + rowNo + "'>" +
-                "<td class='position1'></td>" +
-                "<td class='position2'></td>" +
-                "<td class='plant-name'></td>" +
-                "<td class='plant-image'></td>" +
-                "<td class='number'></td>" +
-                "<td class='plant-type'></td>" +
-                "<td class='type-price'></td>" +
-                "<td class='type-price-sum'></td>" +
-                "<td class='comment'></td>" +
-                '<td class="commentImage"><img class="comment-img" style="max-height: 200px" hidden/><input type="button" class="my-button-white" value="浏览" ></td>' +
+                "<td class='position1 my-td'></td>" +
+                "<td class='position2 my-td' ></td>" +
+                "<td class='plant-name my-td'></td>" +
+                "<td class='plant-image my-td'></td>" +
+                "<td class='number my-td'></td>" +
+                "<td class='plant-type my-td'></td>" +
+                "<td class='type-price my-td'></td>" +
+                "<td class='type-price-sum my-td'></td>" +
+                "<td class='comment my-td'></td>" +
+                '<td class="commentImage my-td"><img class="comment-img" style="max-height: 200px" hidden/><input type="button" class="my-button-white" value="浏览" ></td>' +
                 '<td hidden><input class="addImage" name="comment-image" type="file"></td>' +
-                "<td class='plant-price'></td>" +
-                "<td class='plant-price-sum'></td>" +
-                "<td style='white-space:nowrap'><a class='templatemo-edit-btn' href='' onclick='deleteNoSave(this);return false;'>删除</a></td>" +
+                "<td class='plant-price my-td'></td>" +
+                "<td class='plant-price-sum my-td'></td>" +
+                "<td style='white-space:nowrap my-td'><a class='templatemo-edit-btn' href='' onclick='deleteNoSave(this);return false;'>删除</a></td>" +
                 "</tr>";
             var body = $("#scheme-body");
             body.append(rowContent);
             initEdit();
             addImageButton();
             chooseImgButton();
+            setImageStatus();
         })
     }
 
@@ -319,10 +321,10 @@
                                 if (temp.length > 1) {
                                     row[rowName] = temp[1];
                                 } else {
-                                    row[rowName] = 'c3VjY2Vzcw==';
+                                    row[rowName] = $.base64.encode(img_src.split("row=")[1]);
                                 }
                             } else {
-                                row[rowName] = 'c3VjY2Vzcw==';
+                                row[rowName] = null;
                             }
                         } else {
                             row[rowName] = $(this).text();
@@ -466,7 +468,7 @@
             var num = $(this).parent().find('td.number').text();
             td_img.empty();
             td_img.append(img);
-            $("img").fadeIn(1000);
+            $(this).parent().find('td.plant-image img').fadeIn(1000);
             $(this).parent().find('td.plant-price').text(getPrice(params.newValue));
             if (num > 0) {
                 $(this).parent().find('td.plant-price-sum').text(getPrice(params.newValue) * num);
@@ -504,14 +506,63 @@
         })
     }
 
+    /**
+     * 图片加载状态
+     */
     function setImageStatus() {
-        $("img").each(function () {
-                if (!$(this).attr('src')) {
-                    $(this).parent().parent().find('.my-button-white').hide();
-                    $(this).click = $(this).parent().parent().find('.my-button-white').click;
-                }
+        $("img.comment-img").each(function () {
+            var status = true;
+            $(this).on('load', function () {
+                $(this).parent().parent().find('input.my-button-white').hide();
+                $(this).on('click', function () {
+                    $(this).parent().parent().find('input.addImage').click();
+                });
+            });
+            $(this).on('error', function () {
+                $(this).hide();
+            });
             }
         )
+    }
+
+
+    function addRow(elem, rowNo) {
+        var rowContent = "<tr row='" + rowNo + "'>" +
+            "<td class='position1 my-td'></td>" +
+            "<td class='position2 my-td' ></td>" +
+            "<td class='plant-name my-td'></td>" +
+            "<td class='plant-image my-td'></td>" +
+            "<td class='number my-td'></td>" +
+            "<td class='plant-type my-td'></td>" +
+            "<td class='type-price my-td'></td>" +
+            "<td class='type-price-sum my-td'></td>" +
+            "<td class='comment my-td'></td>" +
+            '<td class="commentImage my-td"><img class="comment-img" style="max-height: 200px" hidden/><input type="button" class="my-button-white" value="浏览" ></td>' +
+            '<td hidden><input class="addImage" name="comment-image" type="file"></td>' +
+            "<td class='plant-price my-td'></td>" +
+            "<td class='plant-price-sum my-td'></td>" +
+            "<td style='white-space:nowrap my-td'><a class='templatemo-edit-btn' href='' onclick='deleteNoSave(this);return false;'>删除</a></td>" +
+            "</tr>";
+        var body = $("#scheme-body");
+        elem.after(rowContent);
+        initEdit();
+        addImageButton();
+        chooseImgButton();
+    }
+
+
+    function insertAfter(elem) {
+        elem = $(elem);
+        var trNow = elem.parent().parent();
+        var insertRow = parseInt(trNow.attr('row'));
+        var sib = trNow.nextAll();
+        for (var loop = 0; loop < sib.length; loop++) {
+            //row自增1
+            var test = $(sib[loop]);
+            var newRow = parseInt(test.attr('row')) + 1;
+            $(sib[loop]).attr('row', newRow);
+        }
+        addRow(elem.parent().parent(), insertRow + 1);
     }
 
 

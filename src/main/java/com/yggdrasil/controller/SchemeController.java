@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -26,14 +27,16 @@ public class SchemeController {
     public String add(@RequestBody List<Scheme> schemes) {
         try {
             for (Scheme scheme : schemes) {
-                if (scheme.getCommentImage().length < 100 ||
-                        (new String(scheme.getCommentImage(), "UTF-8")).equals("success")) {
-                    scheme.setCommentImage(schemeRepository.findOneOnlyImage(scheme.getSchemeID(), scheme.getRow()));
+                byte[] img = scheme.getCommentImage();
+                if (img != null && img.length < 60 && img.length > 0) {
+                    scheme.setCommentImage(schemeRepository.findOneOnlyImage(scheme.getSchemeID()
+                            , Integer.parseInt(new String(img, "UTF-8"))));
                 }
             }
             schemeRepository.save(schemes);
             schemeRepository.flush();
         } catch (Exception e) {
+            e.printStackTrace();
             return "error";
         }
         return "success";
