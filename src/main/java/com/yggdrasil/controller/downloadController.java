@@ -130,13 +130,14 @@ public class downloadController {
                                 ByteArrayInputStream in = new ByteArrayInputStream(pic);
                                 BufferedImage image = ImageIO.read(in);
 //                                System.out.println(image.getWidth() + " " + image.getHeight());
-                                sheet.getRow(r).setHeightInPoints(image.getHeight() * ((5 + 30 * 7) * 72 / 96) / image.getWidth());
+//                                sheet.getRow(r).setHeightInPoints(image.getHeight() * ((5 + 30 * 7) * 72 / 96) / image.getWidth());
+                                sheet.getRow(r).setHeightInPoints(104);
                                 System.out.println(image.getHeight() * ((5 + 30 * 7) * 72 / 96) / image.getWidth());
                                 double scale;
                                 if ((double) image.getWidth() / image.getHeight() < 1.777777778) {
-                                    scale = ((double) 1080 / image.getHeight()) * 0.08;
+                                    scale = ((double) 1080 / image.getHeight()) * 0.12;
                                 } else
-                                    scale = ((double) 1920 / image.getWidth()) * 0.08;
+                                    scale = ((double) 1920 / image.getWidth()) * 0.12;
                                 sheet.addMergedRegion(new CellRangeAddress(r, r, c, c));
                                 HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
                                 HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) c, r, (short) (c + 1), r + 1);
@@ -167,9 +168,9 @@ public class downloadController {
                                     System.out.println(CommentImage.getHeight());
                                     double scaleComment;
                                     if ((double) CommentImage.getWidth() / CommentImage.getHeight() < 1.777777778) {
-                                        scaleComment = ((double) 1080 / CommentImage.getHeight()) * 0.08;
+                                        scaleComment = ((double) 1080 / CommentImage.getHeight()) * 0.12;
                                     } else
-                                        scaleComment = ((double) 1920 / CommentImage.getWidth()) * 0.08;
+                                        scaleComment = ((double) 1920 / CommentImage.getWidth()) * 0.12;
 
                                     HSSFPatriarch patriarchComment = (HSSFPatriarch) sheet.createDrawingPatriarch();
                                     HSSFClientAnchor anchorComment = new HSSFClientAnchor(0, 0, 0, 0, (short) c, r, (short) (c + 1), r + 1);

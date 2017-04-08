@@ -112,23 +112,27 @@ function saveImage(image) {
 }
 
 function remove(id) {
-    $.ajax({
-        url: '/plant/delete',
-        async: false,
-        data: {"id": id},
-        success: function (data) {
-            if (data === "success")
-                alert("删除成功");
-            else
+    var conf = confirm('删除该植物将会删除在其他报表中引用了该植物的所有信息\n是否确认删除？');
+    if (conf) {
+        $.ajax({
+            url: '/plant/delete',
+            async: false,
+            data: {"id": id},
+            success: function (data) {
+                if (data === "success")
+                    alert("删除成功");
+                else
+                    alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
+            },
+            error: function () {
                 alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
-        },
-        error: function () {
-            alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
-        }
-    });
-    showInfo();
-    $('.setting').show();
-    return false;
+            }
+        });
+        showInfo();
+        $('.setting').show();
+        return false;
+    }
+
 }
 
 

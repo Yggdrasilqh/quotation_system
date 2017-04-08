@@ -21,4 +21,7 @@ public interface SchemeRepository extends JpaRepository<Scheme,SchemePK> {
     List<Scheme> findBySchemeIDOrderByRow(int schemeID);
     @Transactional
     void deleteBySchemeID(int schemeID);
+
+    @Transactional
+    void deleteByPlantID(int plantID);
 }

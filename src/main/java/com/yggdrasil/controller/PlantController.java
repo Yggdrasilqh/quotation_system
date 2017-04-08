@@ -3,6 +3,7 @@ package com.yggdrasil.controller;
 import com.yggdrasil.entity.Plant;
 import com.yggdrasil.entity.Scheme;
 import com.yggdrasil.repository.PlantRepository;
+import com.yggdrasil.repository.SchemeRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,8 @@ public class PlantController {
 
     @Resource
     private PlantRepository plantRepository;
-
+    @Resource
+    private SchemeRepository schemeRepository;
 
     /*
      * @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -89,6 +91,7 @@ public class PlantController {
     @ResponseBody
     public String deletePlant(int id) {
         try {
+            schemeRepository.deleteByPlantID(id);
             plantRepository.delete(id);
         } catch (Exception e) {
             return "false";

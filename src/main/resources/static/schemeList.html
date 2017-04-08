@@ -46,9 +46,9 @@
         </div>
         <nav class="templatemo-left-nav">
             <ul>
-                <li><a href="index.html" class="active"><i class="fa fa-home fa-fw"></i>Dashboard</a></li>
-                <li><a href="plantType.html"><i class="fa fa-bar-chart fa-fw"></i>Charts</a></li>
-                <li><a href="schemeList.html"><i class="fa fa-database fa-fw"></i>Data Visualization</a></li>
+                <li><a href="index.html"><i class="fa fa-home fa-fw"></i>植物管理</a></li>
+                <li><a href="plantType.html"><i class="fa fa-bar-chart fa-fw"></i>种类管理</a></li>
+                <li><a href="schemeList.html" class="active"><i class="fa fa-database fa-fw"></i>报表管理</a></li>
                 <li><a href="maps.html"><i class="fa fa-map-marker fa-fw"></i>Maps</a></li>
                 <li><a href="manage-users.html"><i class="fa fa-users fa-fw"></i>Manage Users</a></li>
                 <li><a href="preferences.html"><i class="fa fa-sliders fa-fw"></i>Preferences</a></li>
@@ -158,7 +158,7 @@
         var schemeList = getAllSchemeList();
         var body = "";
         for (var loop = 0; loop < schemeList.length; loop++) {
-            body += "<tr><td>" + "<a href='/scheme.html?schemeID= " + schemeList[loop].id + "'>" +schemeList[loop].name + "</a></td>" +
+            body += "<tr><td>" + "<a href='/scheme.html?schemeID= " + schemeList[loop].id + "&schemeName=" + encodeURI(schemeList[loop].name) + "'>" + schemeList[loop].name + "</a></td>" +
                 "<td>" + schemeList[loop].date + "</td>" +
                 "<td><a onclick='remove(" + schemeList[loop].id + ")'>删除</a></td>" +
                 "</tr>";

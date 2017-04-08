@@ -189,22 +189,26 @@
     }
 
     function remove(id){
-        $.ajax({
-            url: '/plantType/delete',
-            async: false,
-            data: {"id":id},
-            success: function (data) {
-                if(data === "success")
-                    alert("删除成功");
-                else
+        if (prompt("⚠️\n该操作会删除该类型下的所有植物；\n以及该包含该植物报表的对应列\n如确认要删除请输入：删除") === '删除') {
+            $.ajax({
+                url: '/plantType/delete',
+                async: false,
+                data: {"id": id},
+                success: function (data) {
+                    if (data === "success")
+                        alert("删除成功");
+                    else
+                        alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
+                },
+                error: function () {
                     alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
-            },
-            error: function () {
-                alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
-            }
-        });
-        clear();
-        return false;
+                }
+            });
+            clear();
+            return false;
+        } else {
+            alert('取消了删除');
+        }
     }
 
 
