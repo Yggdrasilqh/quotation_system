@@ -4,10 +4,7 @@ import com.yggdrasil.entity.Scheme;
 import com.yggdrasil.repository.PlantRepository;
 import com.yggdrasil.repository.PlantTypeRepository;
 import com.yggdrasil.repository.SchemeRepository;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +55,7 @@ public class downloadController {
             }
         }
         HSSFWorkbook wb = new HSSFWorkbook();
-        CellStyle style = wb.createCellStyle();
+        HSSFCellStyle style = wb.createCellStyle();
         style.setFillForegroundColor(HSSFCellStyle.THIN_BACKWARD_DIAG);
         style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);//垂直居中
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
@@ -68,6 +65,20 @@ public class downloadController {
         style.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
         style.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
         style.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+
+
+        HSSFFont font = wb.createFont();
+        font.setFontName("黑体");
+        font.setFontHeightInPoints((short) 18);//设置字体大小
+
+
+        HSSFFont font1 = wb.createFont();
+        font1.setFontName("仿宋_GB2312");
+        font1.setFontHeightInPoints((short) 16);//设置字体大小
+
+        HSSFFont font2 = wb.createFont();
+        font2.setFontName("仿宋_GB2312");
+        font2.setFontHeightInPoints((short) 14);//设置字体大小
 
         style.setWrapText(true);
 
@@ -94,12 +105,15 @@ public class downloadController {
                 cell = row.createCell(c);
                 cell.setCellStyle(style);
                 if (r == 0) {
+                    style.setFont(font);
                     cell.setCellValue(schemeName);
                     c = colNum - 1;
                 } else {
                     if (r == 1) {
+                        style.setFont(font1);
                         cell.setCellValue(excelHead[index.get(c)]);
                     } else {
+                        style.setFont(font2);
                         switch (index.get(c)) {
                             case 0:
                                 cell.setCellValue(schemes.get(r - 2).getPosition1());
