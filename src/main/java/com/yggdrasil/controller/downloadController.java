@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by chenq on 2017/4/4,004.
@@ -69,7 +70,7 @@ public class downloadController {
 
         HSSFFont font = wb.createFont();
         font.setFontName("黑体");
-        font.setFontHeightInPoints((short) 18);//设置字体大小
+        font.setFontHeightInPoints((short) 14);//设置字体大小
 
 
         HSSFFont font1 = wb.createFont();
@@ -89,6 +90,8 @@ public class downloadController {
         sheet.setDefaultRowHeight((short) 400);
         Row row;
         Cell cell;
+        int merag_r_1 = 2;
+        int merag_r_2=2;
         for (int r = 0; r < rowNum; r++) {
             row = sheet.createRow(r);
             if (r == 0) {
@@ -116,9 +119,19 @@ public class downloadController {
                         style.setFont(font2);
                         switch (index.get(c)) {
                             case 0:
+                                if (r > 3 && !Objects.equals(schemes.get(r - 2).getPosition1(), schemes.get(r - 3).getPosition1())) {
+                                    merag_r_1 = r;
+                                } else {
+                                    sheet.addMergedRegion(new CellRangeAddress(merag_r_1,r,0,index.get(c)));
+                                }
                                 cell.setCellValue(schemes.get(r - 2).getPosition1());
                                 break;
                             case 1:
+                                if (r > 3 && !Objects.equals(schemes.get(r - 2).getPosition1(), schemes.get(r - 3).getPosition1())) {
+                                    merag_r_2 = r;
+                                } else {
+                                    sheet.addMergedRegion(new CellRangeAddress(merag_r_2,r,1,index.get(c)));
+                                }
                                 cell.setCellValue(schemes.get(r - 2).getPosition2());
                                 break;
                             case 2:
