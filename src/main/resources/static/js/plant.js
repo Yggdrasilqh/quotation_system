@@ -1,40 +1,43 @@
 /**
  * Created by yggdrasil on 2017/4/1.
  */
-function getAllInfo() {
+function getAllInfo(page,size) {
     var plants = null;
     $.ajax({
         url: '/plant/allInfo',
+        data:{"page":page-1,"size":size},
         async: false,
         success: function (data) {
             plants = data;
         }
     });
+    totalPages = plants.totalPages;
+    currentPage = plants.number;
     return plants;
 }
 
 
-function showInfo() {
+function showInfo(page,size) {
     var plant_table = $("#plant-table");
     var tbody = "";
     plant_table.empty();
-    var info = getAllInfo();
+    var info = getAllInfo(page,size);
     var flag = false;
     if (!$('.setting').eq(0).is(':hidden')) {
         flag = true;
     }
-    for (var loop = 0; loop < info.length; loop++) {
-        tbody += "<tr><td hidden id=" + info[loop].id + ">" + info[loop].id + "</td>" +
-            "<td class='my-td plant-name" + loop + "'>" + info[loop].name + "</td>" +
-            "<td class='my-td plant-type" + loop + "'>" + info[loop].type + "</td>" +
-            "<td class='my-td plant-price" + loop + "'>" + info[loop].price + "</td><td>";
-        if (info[loop].image !== null) {
-            tbody += "<img id='new_img" + loop + "' onclick='img" + loop + ".click()' src='plant/image?id=" + info[loop].id + "'style='height: 200px;'/>";
+    for (var loop = 0; loop < info.content.length; loop++) {
+        tbody += "<tr><td hidden id=" + info.content[loop].id + ">" + info.content[loop].id + "</td>" +
+            "<td class='my-td plant-name" + loop + "'>" + info.content[loop].name + "</td>" +
+            "<td class='my-td plant-type" + loop + "'>" + info.content[loop].type + "</td>" +
+            "<td class='my-td plant-price" + loop + "'>" + info.content[loop].price + "</td><td>";
+        if (info.content[loop].image !== null) {
+            tbody += "<img id='new_img" + loop + "' onclick='img" + loop + ".click()' src='plant/image?id=" + info.content[loop].id + "'style='height: 200px;'/>";
             tbody += '<input id="img' + loop + '" class="img" name="image" type="file" style="display:none" required/>'
         } else {
             tbody += "<a onclick=''>"
         }
-        tbody += "</td>" + "<td class='my-td setting' hidden><a class='templatemo-edit-btn' href='' onclick='remove(" + info[loop].id + ")'>删除</a></td>" +
+        tbody += "</td>" + "<td class='my-td setting' hidden><a class='templatemo-edit-btn' href='' onclick='remove(" + info.content[loop].id + ")'>删除</a></td>" +
             "</tr>";
     }
     plant_table.append(tbody);
@@ -42,12 +45,12 @@ function showInfo() {
         $('.setting').show();
     $.fn.editable.defaults.mode = 'inline';
 
-    for (var loop = 0; loop < info.length; loop++) {
+    for (var loop = 0; loop < info.content.length; loop++) {
 
         $(".plant-name" + loop).editable({
             type: 'text',
             name: "name",
-            pk: info[loop].id,
+            pk: info.content[loop].id,
             url: "/plant/update"
         });
 
@@ -57,7 +60,7 @@ function showInfo() {
             showbuttons: false,
             sourceCache: false,
             name: "type",
-            pk: info[loop].id,
+            pk: info.content[loop].id,
             url: "/plant/update"
         });
         $(".plant-price" + loop).editable({
@@ -70,7 +73,7 @@ function showInfo() {
                 }
             },
             name: "price",
-            pk: info[loop].id,
+            pk: info.content[loop].id,
             url: "/plant/update"
         });
 
@@ -93,6 +96,7 @@ function showInfo() {
 
 
     }
+
 }
 
 function saveImage(image) {

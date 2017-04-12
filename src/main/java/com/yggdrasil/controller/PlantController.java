@@ -4,6 +4,9 @@ import com.yggdrasil.entity.Plant;
 import com.yggdrasil.entity.Scheme;
 import com.yggdrasil.repository.PlantRepository;
 import com.yggdrasil.repository.SchemeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -56,9 +59,9 @@ public class PlantController {
 
     @RequestMapping("/allInfo")
     @ResponseBody
-    public List<Plant> getPlant() {
-        List<Plant> plants = plantRepository.findAll();
-        return plants;
+    public Page<Plant> getPlant(@RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "size", defaultValue = "15") Integer size) {
+        Pageable pageable = new PageRequest(page,size);
+        return plantRepository.findAll(pageable);
     }
 
     @RequestMapping("/selectInfo")
