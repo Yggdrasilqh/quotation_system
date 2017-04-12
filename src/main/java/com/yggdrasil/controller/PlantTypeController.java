@@ -2,7 +2,9 @@ package com.yggdrasil.controller;
 
 import com.yggdrasil.entity.Plant;
 import com.yggdrasil.entity.PlantType;
+import com.yggdrasil.repository.PlantRepository;
 import com.yggdrasil.repository.PlantTypeRepository;
+import com.yggdrasil.repository.SchemeRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,11 @@ public class PlantTypeController {
 
     @Resource
     PlantTypeRepository plantTypeRepository;
+    @Resource
+    SchemeRepository schemeRepository;
+    @Resource
+    PlantRepository plantRepository;
+
 
     @RequestMapping("/getAll")
     public List<PlantType> getAll(){
@@ -46,7 +53,12 @@ public class PlantTypeController {
     }
 
     @RequestMapping("/delete")
-    public String add(int id) {
+    public String delete(int id) {
+        String typeName = plantTypeRepository.findOne(id).getName();
+        for (Plant plant : plantRepository.findByType(typeName)) {
+            schemeRepository.deleteByPlantID(plant.getId());
+        }
+        plantRepository.deleteByType(typeName);
         plantTypeRepository.delete(id);
         return "success";
     }

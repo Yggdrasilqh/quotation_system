@@ -30,3 +30,38 @@
     vertical-align: middle !important;
     font-size: large;
 }
+
+@keyframes myfirst {
+    from {
+        width: 0;
+        opacity: 0
+    }
+    to {
+        width: 100%;
+        opacity: 1
+    }
+}
+
+@-webkit-keyframes myfirst /* Safari 和 Chrome */
+{
+    from {
+        width: 0;
+        opacity: 0
+    }
+    to {
+        width: 100%;
+        opacity: 1
+    }
+}
+
+.input-mini {
+    animation: myfirst 0.5s;
+    -webkit-animation: myfirst 0.5s; /* Safari 和 Chrome */
+    width: 100% !important;
+}
+
+.input-sm {
+    animation: myfirst 0.5s;
+    -webkit-animation: myfirst 0.5s; /* Safari 和 Chrome */
+    width: 100% !important;
+}
