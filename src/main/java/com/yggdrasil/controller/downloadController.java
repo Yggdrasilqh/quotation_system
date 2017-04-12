@@ -5,7 +5,6 @@ import com.yggdrasil.repository.PlantRepository;
 import com.yggdrasil.repository.PlantTypeRepository;
 import com.yggdrasil.repository.SchemeRepository;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by chenq on 2017/4/4,004.
@@ -69,7 +69,7 @@ public class downloadController {
 
         HSSFFont font = wb.createFont();
         font.setFontName("黑体");
-        font.setFontHeightInPoints((short) 18);//设置字体大小
+        font.setFontHeightInPoints((short) 14);//设置字体大小
 
 
         HSSFFont font1 = wb.createFont();
@@ -82,13 +82,15 @@ public class downloadController {
 
         style.setWrapText(true);
 
-        Sheet sheet = wb.createSheet("sheet " + ((int) (100000 * Math.random())));
+        HSSFSheet sheet = wb.createSheet("sheet " + ((int) (100000 * Math.random())));
 
         // 设置列的宽度
         sheet.setDefaultColumnWidth(30);
         sheet.setDefaultRowHeight((short) 400);
-        Row row;
-        Cell cell;
+        HSSFRow row;
+        HSSFCell cell;
+        int merag_r_1 = 2;
+        int merag_r_2 = 2;
         for (int r = 0; r < rowNum; r++) {
             row = sheet.createRow(r);
             if (r == 0) {
@@ -116,10 +118,26 @@ public class downloadController {
                         style.setFont(font2);
                         switch (index.get(c)) {
                             case 0:
-                                cell.setCellValue(schemes.get(r - 2).getPosition1());
+                                if (r >= 3) {
+                                    if (!schemes.get(r - 2).getPosition1().equals(schemes.get(r - 3).getPosition1())) {
+                                        sheet.addMergedRegion(new CellRangeAddress(merag_r_1, r-1, 0, 0));
+                                        merag_r_1 = r;
+                                        cell.setCellValue(schemes.get(r - 2).getPosition1());
+                                    }else if(r-1==schemes.size()){
+                                        sheet.addMergedRegion(new CellRangeAddress(merag_r_1, r, 0, 0));
+                                    }
+                                }else cell.setCellValue(schemes.get(r - 2).getPosition1());
                                 break;
                             case 1:
-                                cell.setCellValue(schemes.get(r - 2).getPosition2());
+                                if (r >= 3) {
+                                    if (!schemes.get(r - 2).getPosition2().equals(schemes.get(r - 3).getPosition2())) {
+                                        sheet.addMergedRegion(new CellRangeAddress(merag_r_2, r-1, 1, 1));
+                                        merag_r_2 = r;
+                                        cell.setCellValue(schemes.get(r - 2).getPosition2());
+                                    }else if(r-1==schemes.size()){
+                                        sheet.addMergedRegion(new CellRangeAddress(merag_r_2, r, 1, 1));
+                                    }
+                                }else cell.setCellValue(schemes.get(r - 2).getPosition2());
                                 break;
                             case 2:
                                 cell.setCellValue(plantRepository.findOne(schemes.get(r - 2).getPlantID()).getName());
@@ -132,12 +150,11 @@ public class downloadController {
 //                                System.out.println(image.getWidth() + " " + image.getHeight());
 //                                sheet.getRow(r).setHeightInPoints(image.getHeight() * ((5 + 30 * 7) * 72 / 96) / image.getWidth());
                                 sheet.getRow(r).setHeightInPoints(104);
-                                System.out.println(image.getHeight() * ((5 + 30 * 7) * 72 / 96) / image.getWidth());
                                 double scale;
                                 if ((double) image.getWidth() / image.getHeight() < 1.777777778) {
-                                    scale = ((double) 1080 / image.getHeight()) * 0.12;
+                                    scale = ((double) 1080 / image.getHeight()) * 0.08;
                                 } else
-                                    scale = ((double) 1920 / image.getWidth()) * 0.12;
+                                    scale = ((double) 1920 / image.getWidth()) * 0.08;
                                 sheet.addMergedRegion(new CellRangeAddress(r, r, c, c));
                                 HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
                                 HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) c, r, (short) (c + 1), r + 1);
@@ -165,13 +182,11 @@ public class downloadController {
                                     BufferedImage CommentImage = ImageIO.read(inComment);
 //                                    sheet.getRow(r).setHeightInPoints(CommentImage.getHeight() * ((5 + 30 * 7) * 72 / 96) / CommentImage.getWidth());
                                     sheet.addMergedRegion(new CellRangeAddress(r, r, c, c));
-                                    System.out.println(CommentImage.getHeight());
                                     double scaleComment;
                                     if ((double) CommentImage.getWidth() / CommentImage.getHeight() < 1.777777778) {
-                                        scaleComment = ((double) 1080 / CommentImage.getHeight()) * 0.12;
+                                        scaleComment = ((double) 1080 / CommentImage.getHeight()) * 0.08;
                                     } else
-                                        scaleComment = ((double) 1920 / CommentImage.getWidth()) * 0.12;
-
+                                        scaleComment = ((double) 1920 / CommentImage.getWidth()) * 0.08;
                                     HSSFPatriarch patriarchComment = (HSSFPatriarch) sheet.createDrawingPatriarch();
                                     HSSFClientAnchor anchorComment = new HSSFClientAnchor(0, 0, 0, 0, (short) c, r, (short) (c + 1), r + 1);
                                     patriarchComment.createPicture(anchorComment, wb.addPicture(picComment, HSSFWorkbook.PICTURE_TYPE_JPEG)).resize(scaleComment);
