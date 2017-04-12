@@ -27,6 +27,8 @@
     <!--<script src="js/jquery-migrate-1.2.1.min.js"></script> &lt;!&ndash;  jQuery Migrate Plugin &ndash;&gt;-->
     <script type="text/javascript" src="js/templatemo-script.js"></script>
     <script src="js/jquery.base64.js"></script>
+    <script src="js/tablesMergeCell.js"></script>
+
     <!--<script src="js/plant.js"></script>-->
 </head>
 <body>
@@ -191,6 +193,7 @@
             initPlantName($(this).find('td.plant-name'), $(this).find('td.plant-type').text());
         });
         setImageStatus();
+        combinePosition();
     }
 
     function submitSchemeClick() {
@@ -596,6 +599,53 @@
             window.open(url);
         });
     }
+
+    function combinePosition() {
+        defaultsettings = {
+            automatic: true,
+            // 是否根据内容来合并
+            cols: [0, 1],
+            // 用数组表示列的索引,从0开始,然后根据指定列来处理(合并)相同内容单元格
+            rows: null // 用数组表示行的索引
+        };
+        $("#scheme-table").tablesMergeCell(defaultsettings);
+//        var tempPosition = $(".position2").first();
+//        var num = 1;
+//        var fullLen = $('.position2').length;
+//        var len = 0;
+//        $(".position2").each(function(i){
+//            if(len > 0 && len < fullLen-1 && tempPosition.text() === $(this).text()) {
+//                num++;
+//                $(this).hide();
+//            } else if(len !== fullLen-1){
+//                num = 1;
+//                tempPosition = $(this);
+//            } else {
+//                tempPosition.attr('rowspan',num);
+//            }
+//            if(len === fullLen-1 && tempPosition.text() === $(this).text()) {
+//                num++;
+//                tempPosition.attr('rowspan',num);
+//                $(this).hide();
+//            }
+//            len++;
+//        });
+////        $(".position1").each(function(i){
+////            if(tempPosition.text() !== $(this).text()) {
+////                tempPosition = $(this);
+////                tempPosition.attr("rowspan", num);
+////                num = 1;
+////            } else if(num > 1){
+////                $(this).hide();
+////                num++;
+////            } else {
+////                num++;
+////            }
+////
+////        })
+    }
+
+
 
 
     function getQueryString(name) {
