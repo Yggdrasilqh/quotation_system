@@ -39,7 +39,9 @@ public class PlantTypeController {
     public HashMap<String,String> getSelet(){
         List<PlantType> list = plantTypeRepository.findAll();
         HashMap<String, String> hashMap = new HashMap<>();
-        list.forEach(plantType -> hashMap.put(plantType.getName(), plantType.getName()));
+        for (PlantType p : list) {
+            hashMap.put(p.getName(), p.getName());
+        }
         return hashMap;
     }
 
@@ -70,5 +72,17 @@ public class PlantTypeController {
                 findByName(name).
                 getPrice();
         return 0;
+    }
+
+    @RequestMapping("/update")
+    public String update(int pk, String name, String value) {
+        PlantType plantType = plantTypeRepository.findOne(pk);
+        if ("name".equalsIgnoreCase(name)) {
+            plantType.setName(value);
+        } else if ("price".equalsIgnoreCase(name)) {
+            plantType.setPrice(Float.valueOf(value));
+        }
+        plantTypeRepository.saveAndFlush(plantType);
+        return "success";
     }
 }

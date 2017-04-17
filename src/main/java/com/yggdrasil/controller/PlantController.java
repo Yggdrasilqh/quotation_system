@@ -70,7 +70,10 @@ public class PlantController {
         HashMap<Integer, String> hashMap = new HashMap<>();
         List<Plant> plants;
         if (type != null && !type.isEmpty()) {
-            plantRepository.findByType(type).forEach(plant -> hashMap.put(plant.getId(), plant.getName()));
+            plants = plantRepository.findByType(type);
+            for (Plant plant : plants) {
+                hashMap.put(plant.getId(), plant.getName());
+            }
         }
         return hashMap;
     }

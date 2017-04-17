@@ -37,7 +37,7 @@ function showInfo(page,size) {
         } else {
             tbody += "<a onclick=''>"
         }
-        tbody += "</td>" + "<td class='my-td setting' hidden><a class='templatemo-edit-btn' href='' onclick='remove(" + info.content[loop].id + ")'>删除</a></td>" +
+        tbody += "</td>" + "<td class='my-td setting'><a class='templatemo-edit-btn' href='' onclick='remove(" + info.content[loop].id + ")'>删除</a></td>" +
             "</tr>";
     }
     plant_table.append(tbody);
@@ -126,10 +126,10 @@ function remove(id) {
                 if (data === "success")
                     alert("删除成功");
                 else
-                    alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
+                    alert("删除失败了");
             },
             error: function () {
-                alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
+                alert("删除失败了");
             }
         });
         showInfo();

@@ -6,11 +6,12 @@
     <title>Visual Admin Dashboard - Home</title>
     <meta name="description" content="">
     <meta name="author" content="templatemo">
-    <!--<link href='http://fonts.useso.com/css?family=Open+Sans:400,300,400italic,700' rel='stylesheet' type='text/css'>-->
+
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/templatemo-style.css" rel="stylesheet">
-
+    <link href="css/bootstrap-editable.css" rel="stylesheet"/>
+    <link href="css/my.css" rel="stylesheet"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -18,7 +19,15 @@
       <!--<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>-->
     <!--<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
     <!--[endif]---->
+    <!-- JS -->
 
+    <script src="js/jquery-3.2.0.min.js"></script>      <!-- jQuery -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-editable.min.js"></script>
+    <!--<script src="js/jquery-migrate-1.2.1.min.js"></script> &lt;!&ndash;  jQuery Migrate Plugin &ndash;&gt;-->
+    <script type="text/javascript" src="js/templatemo-script.js"></script>
+    <script src="js/jquery.base64.js"></script>
+    <script src="js/tablesMergeCell.js"></script>
 
 </head>
 <body>
@@ -27,7 +36,7 @@
     <div class="templatemo-sidebar">
         <header class="templatemo-site-header">
             <div class="square"></div>
-            <h1>Visual Admin</h1>
+            <h1>Plant Manage</h1>
         </header>
         <div class="profile-photo-container">
             <img src="images/profile-photo.jpg" alt="Profile Photo" class="img-responsive">
@@ -48,10 +57,6 @@
                 <li><a href="index.html"><i class="fa fa-home fa-fw"></i>植物管理</a></li>
                 <li><a href="plantType.html" class="active"><i class="fa fa-bar-chart fa-fw"></i>种类管理</a></li>
                 <li><a href="schemeList.html"><i class="fa fa-database fa-fw"></i>报表管理</a></li>
-                <li><a href="maps.html"><i class="fa fa-map-marker fa-fw"></i>Maps</a></li>
-                <li><a href="manage-users.html"><i class="fa fa-users fa-fw"></i>Manage Users</a></li>
-                <li><a href="preferences.html"><i class="fa fa-sliders fa-fw"></i>Preferences</a></li>
-                <li><a href="login.html"><i class="fa fa-eject fa-fw"></i>Sign Out</a></li>
             </ul>
         </nav>
     </div>
@@ -114,7 +119,7 @@
                                 </div>
                                 <div class="form-group">
                                     <button id="plantType-form-sub" type="submit" class="templatemo-blue-button"
-                                            style="background-color: #289f5f;">提交
+                                            styldit="background-color: #289f5f;">提交
                                     </button>
                                 </div>
                             </form>
@@ -127,12 +132,7 @@
         </div>
     </div>
 </div>
-<iframe id="id_iframe" name="id_iframe" style="display:none;"></iframe>
-<!-- JS -->
-<script src="js/jquery-1.11.2.min.js"></script>      <!-- jQuery -->
-<script src="js/jquery-migrate-1.2.1.min.js"></script> <!--  jQuery Migrate Plugin -->
-<!--<script src="js/plant.js"></script>-->
-<script type="text/javascript" src="js/templatemo-script.js"></script>      <!-- Templatemo Script -->
+
 
 <script>
 
@@ -178,14 +178,27 @@
         var info = getAllInfo();
         for(var loop = 0 ; loop < info.length ; loop++){
             tbody += "<tr><td hidden>" + info[loop].id + "</td>"+
-                "<td class='my-td'>" + info[loop].name + "</td>" +
-                "<td class='my-td'>" + info[loop].price + "</td>" +
+                "<td class='my-td typeName' data-pk='" + info[loop].id + "'>" + info[loop].name + "</td>" +
+                "<td class='my-td typePrice' data-pk='" + info[loop].id + "'>" + info[loop].price + "</td>" +
                 "<td class='my-td'>" + info[loop].price*30 + "</td>";
 
             tbody += "<td class='my-td setting'><a onclick='remove("+info[loop].id+")'>删除</a></td>" +
                 "</tr>";
         }
         plant_table.append(tbody);
+        for (var loop = 0; loop < info.length; loop++) {
+            $(".typeName").editable({
+                type: 'text',
+                name: "name",
+                url: '/plantType/update'
+            });
+            $(".typePrice").editable({
+                type: 'text',
+                name: 'price',
+                url: '/plantType/update'
+            });
+        }
+
     }
 
     function remove(id){
@@ -220,13 +233,10 @@
         $.ajax({
             type: form.attr('method'),
             url: form.attr('action'),
-            data: form.serialize()
-        }).success(function () {
-            alert("添加成功");
-            clear();
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            alert("添加失败");
-            clear();
+            data: form.serialize(),
+            success: function () {
+                alert('添加成功');
+            }
         });
         clear();
     });

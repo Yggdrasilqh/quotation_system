@@ -28,7 +28,7 @@
     <div class="templatemo-sidebar">
         <header class="templatemo-site-header">
             <div class="square"></div>
-            <h1>Visual Admin</h1>
+            <h1>Plant Manage</h1>
         </header>
         <div class="profile-photo-container">
             <img src="images/profile-photo.jpg" alt="Profile Photo" class="img-responsive">
@@ -49,10 +49,6 @@
                 <li><a href="index.html"><i class="fa fa-home fa-fw"></i>植物管理</a></li>
                 <li><a href="plantType.html"><i class="fa fa-bar-chart fa-fw"></i>种类管理</a></li>
                 <li><a href="schemeList.html" class="active"><i class="fa fa-database fa-fw"></i>报表管理</a></li>
-                <li><a href="maps.html"><i class="fa fa-map-marker fa-fw"></i>Maps</a></li>
-                <li><a href="manage-users.html"><i class="fa fa-users fa-fw"></i>Manage Users</a></li>
-                <li><a href="preferences.html"><i class="fa fa-sliders fa-fw"></i>Preferences</a></li>
-                <li><a href="login.html"><i class="fa fa-eject fa-fw"></i>Sign Out</a></li>
             </ul>
         </nav>
     </div>
@@ -197,10 +193,10 @@
                 if (data === "success")
                     alert("删除成功");
                 else
-                    alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
+                    alert("删除失败了");
             },
             error: function () {
-                alert("删除失败了\n如未解决请联系:yggdrasilqh@gmail.com");
+                alert("删除失败了");
             }
         });
         showSchemeList();

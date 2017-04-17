@@ -37,7 +37,7 @@
     <div class="templatemo-sidebar">
         <header class="templatemo-site-header">
             <div class="square"></div>
-            <h1>Visual Admin</h1>
+            <h1>Plant Manage</h1>
         </header>
         <div class="profile-photo-container">
             <img src="images/profile-photo.jpg" alt="Profile Photo" class="img-responsive">
@@ -58,10 +58,6 @@
                 <li><a href="index.html"><i class="fa fa-home fa-fw"></i>植物管理</a></li>
                 <li><a href="plantType.html"><i class="fa fa-bar-chart fa-fw"></i>种类管理</a></li>
                 <li><a href="schemeList.html" class="active"><i class="fa fa-database fa-fw"></i>报表管理</a></li>
-                <li><a href="maps.html"><i class="fa fa-map-marker fa-fw"></i>Maps</a></li>
-                <li><a href="manage-users.html"><i class="fa fa-users fa-fw"></i>Manage Users</a></li>
-                <li><a href="preferences.html"><i class="fa fa-sliders fa-fw"></i>Preferences</a></li>
-                <li><a href="login.html"><i class="fa fa-eject fa-fw"></i>Sign Out</a></li>
             </ul>
         </nav>
     </div>
@@ -90,7 +86,7 @@
                                     <td><b>总价</b></td>
                                     <td><b>备注</b></td>
                                     <td><b>图片备注</b></td>
-                                    <td><b>成本单价</b></td>
+                                    <td id="price"><b>成本单价(<a onclick="hidePrice()">隐藏</a>)</b></td>
                                     <td><b>成本总价</b></td>
                                     <td><b>操作</b></td>
                                 </tr>
@@ -118,7 +114,9 @@
             <div class="templatemo-flex-row">
                 <div class="col-1" style="text-align: center">
                     <button id="add-new-row" class="templatemo-blue-button">添加新行</button>
-                    <button id="submit-scheme" class="my-button-green">提交</button>
+                    <button id="submit-scheme" class="my-button-green"
+                            style="height: 40px;margin-left: 16px;margin-right: 16px;width: 80px">提交
+                    </button>
                     <button id="exportExcel" class="templatemo-blue-button">导出Excle</button>
 
                 </div>
@@ -594,9 +592,16 @@
 
     function exportExcel() {
         $("#exportExcel").on("click", function () {
-            var url = "/getExcel?schemeID=" + schemeID + "&schemeName=" + schemeName;
-            alert(url);
-            window.open(url);
+            alert($('#price').css("display"));
+            if ($('#price').attr("style") == 'display: none;') {
+                var url = "/getExcel?schemeID=" + schemeID + "&schemeName=" + schemeName + "&writ=" + "0,1,2,3,4,5,6,7,8,9,10,13";
+                alert(url);
+                window.open(url);
+            } else {
+                var url = "/getExcel?schemeID=" + schemeID + "&schemeName=" + schemeName;
+                alert(url);
+                window.open(url);
+            }
         });
     }
 
@@ -646,7 +651,13 @@
     }
 
 
-
+    function hidePrice() {
+        var tb = $('table tr');
+        tb.find('td:eq(10)').fadeOut(function () {
+            $(this).hide();
+        });
+        tb.find('td:eq(11)').fadeOut();
+    }
 
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
